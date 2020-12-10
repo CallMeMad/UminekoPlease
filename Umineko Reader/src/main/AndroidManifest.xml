@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.uminekoplease">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/UminekoReader"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.UminekoPlease">
+        <activity android:name=".DummyChapter02"/>
+        <activity android:name=".DummyChapter03"/>
+        <activity android:name=".Episode01Chapter03" />
+        <activity android:name=".DummyChapter01" />
+        <activity android:name=".DummyChapter04"/>
+        <activity android:name=".DummyChapter05"/>
+
+        <service android:name=".SoundService" android:enabled="true"/>
+        <receiver
+            android:name=".SoundServiceBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+        </receiver>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/UminekoReader"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.UminekoPlease.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ChapListEp1"
+            android:theme="@style/Theme.UminekoPlease.NoActionBar" /> <!-- <activity -->
+        <!-- android:name=".Episode01Chapter01" -->
+        <!-- android:theme="@style/Theme.UminekoPlease.NoActionBar" /> -->
+    </application>
+
+</manifest>

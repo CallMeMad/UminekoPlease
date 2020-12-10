@@ -1,0 +1,2 @@
+include ':Umineko Reader'
+rootProject.name = "Umineko Reader"

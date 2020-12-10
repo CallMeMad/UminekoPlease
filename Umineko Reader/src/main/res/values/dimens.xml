@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="image_size">750dp</dimen>
+    <dimen name="image_width">390dp</dimen>
+    <dimen name="double_image_width">780dp</dimen>
+</resources>
