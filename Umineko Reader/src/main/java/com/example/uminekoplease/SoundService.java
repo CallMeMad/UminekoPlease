@@ -24,7 +24,6 @@ public class SoundService extends Service {
         mMediaPlayer.setLooping(true); //set looping
         mMediaPlayer.setVolume(100,100);
         mMediaPlayer.start();
-
         return START_REDELIVER_INTENT;
     }
 
@@ -40,6 +39,7 @@ public class SoundService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
 
     //We use it to fade away our sound when we stop our service
     private class AsyncCaller extends AsyncTask<Void, Void, Void>

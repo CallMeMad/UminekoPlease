@@ -10,14 +10,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UminekoPlease">
-        <activity android:name=".DummyChapter02"/>
-        <activity android:name=".DummyChapter03"/>
-        <activity android:name=".Episode01Chapter03" />
+        <activity android:name=".DummyChapter02" />
+        <activity android:name=".DummyChapter03" />
+        <activity
+            android:name=".Episode01Chapter03"
+            android:noHistory="true" />
         <activity android:name=".DummyChapter01" />
-        <activity android:name=".DummyChapter04"/>
-        <activity android:name=".DummyChapter05"/>
+        <activity android:name=".DummyChapter04" />
+        <activity android:name=".DummyChapter05" />
 
-        <service android:name=".SoundService" android:enabled="true"/>
+        <service
+            android:name=".SoundService"
+            android:enabled="true" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/UminekoReader"
@@ -31,9 +36,7 @@
         </activity>
         <activity
             android:name=".ChapListEp1"
-            android:theme="@style/Theme.UminekoPlease.NoActionBar" /> <!-- <activity -->
-        <!-- android:name=".Episode01Chapter01" -->
-        <!-- android:theme="@style/Theme.UminekoPlease.NoActionBar" /> -->
+            android:theme="@style/Theme.UminekoPlease.NoActionBar" />
     </application>
 
 </manifest>
