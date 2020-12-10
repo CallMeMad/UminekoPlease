@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View view)
             {
                Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
-                stopService(music);
-                toggle=false;
+               stopService(music);
+               toggle=false;
                startActivity(ChapListEp1);
             }
         });

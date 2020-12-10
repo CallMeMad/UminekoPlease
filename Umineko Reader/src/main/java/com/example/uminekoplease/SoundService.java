@@ -10,20 +10,21 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 public class SoundService extends Service {
-    private static MediaPlayer player;
+    private static MediaPlayer mMediaPlayer;
     float volume;
 
     public void onCreate(){
         super.onCreate();
-        this.player = new MediaPlayer();
+        mMediaPlayer = new MediaPlayer();
         this.volume=1;
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        player = MediaPlayer.create(this, intent.getIntExtra("ID",0)); //select music file
-        player.setLooping(true); //set looping
-        player.setVolume(100,100);
-        player.start();
+        mMediaPlayer = MediaPlayer.create(this, intent.getIntExtra("ID",0)); //select music file
+        mMediaPlayer.setLooping(true); //set looping
+        mMediaPlayer.setVolume(100,100);
+        mMediaPlayer.start();
+
         return START_REDELIVER_INTENT;
     }
 
@@ -46,11 +47,11 @@ public class SoundService extends Service {
         @Override
         protected Void doInBackground(Void... voids) {
             do {
-                player.setVolume(volume,volume);
+                mMediaPlayer.setVolume(volume,volume);
                 volume-=0.0005f;
             }while(volume>0);
-            player.stop();
-            player.release();
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
             return null;
         }
 

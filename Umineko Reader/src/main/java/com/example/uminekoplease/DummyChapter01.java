@@ -16,7 +16,7 @@ public class DummyChapter01 extends AppCompatActivity {
             ArrayList<Integer> chapter01List = new ArrayList<Integer>();
             ArrayList<Integer> musicListChapter01 = new ArrayList<Integer>();
             //Data List /musicListChapter(1)= next Chapter
-            chapter01List.add(31); musicListChapter01.add(R.raw.rengoku);
+            chapter01List.add(31); musicListChapter01.add(2);
             chapter01List.add(33); musicListChapter01.add(R.raw.rengoku);
             chapter01List.add(29); musicListChapter01.add(R.raw.rengoku);
             chapter01List.add(28); musicListChapter01.add(R.raw.rengoku);

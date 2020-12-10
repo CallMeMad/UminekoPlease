@@ -18,12 +18,6 @@
         <activity android:name=".DummyChapter05"/>
 
         <service android:name=".SoundService" android:enabled="true"/>
-        <receiver
-            android:name=".SoundServiceBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true"
-            android:label="RestartServiceWhenStopped">
-        </receiver>
         <activity
             android:name=".MainActivity"
             android:label="@string/UminekoReader"

@@ -44,6 +44,7 @@ public class Episode01Chapter03 extends AppCompatActivity  {
         this.viewPager = findViewById(R.id.view_pager);
         this.start= getIntent().getBooleanExtra("start",true);
         this.music= new Intent(getApplicationContext(),SoundService.class);
+        stopService(music);
         //Number of Page
         this.number = getIntent().getIntExtra("number", 0);
 
