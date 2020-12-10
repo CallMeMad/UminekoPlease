@@ -3,11 +3,13 @@ package com.example.uminekoplease;
 import android.content.Intent;
 
 public class Chapter {
-    //Mes attributs
+
+    //Chapter attributes
     private String name;
     private String date;
     private Intent intent;
-    //Constructeur
+
+    //Constructor
     public Chapter(String name,String date, Intent intent)
     {
         this.name=name;
@@ -15,7 +17,7 @@ public class Chapter {
         this.intent=intent;
     }
 
-    //Méthodes
+    //Methods
     public String getName()
     {
         return  name;

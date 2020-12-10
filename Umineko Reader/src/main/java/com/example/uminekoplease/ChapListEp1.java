@@ -2,7 +2,6 @@ package com.example.uminekoplease;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,9 +14,11 @@ import java.util.List;
 
 public class ChapListEp1 extends AppCompatActivity {
 
+    //Variable Declaration
     private Toolbar toolbar;
     private ImageView imageView;
     private TextView textToolBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,27 +29,25 @@ public class ChapListEp1 extends AppCompatActivity {
         setSupportActionBar(toolbar);
         this.textToolBar=(TextView)findViewById(R.id.Titre);
         textToolBar.setText(R.string.ToolBarChapList);
-        //liste de chapitre
-        List<Chapter> chapterList = new ArrayList<>();
-        //chapterList.add(new Chapter("Chapter 01","02/12/2020",new Intent(getApplicationContext(), Episode01Chapter01.class).putExtra("start",true)));
-        //chapterList.add(new Chapter("Chapter 02","03/12/2020",new Intent(getApplicationContext(), Episode01Chapter02.class).putExtra("start",true)));
 
+        //Initialize Chapter List
+        List<Chapter> chapterList = new ArrayList<>();
+
+        //Add our chapter to the LIst
         chapterList.add(new Chapter("Chapter 01","02/12/2020",new Intent(getApplicationContext(), DummyChapter01.class).putExtra("start",true)));
         chapterList.add(new Chapter("Chapter 02","09/12/2020",new Intent(getApplicationContext(), DummyChapter02.class).putExtra("start",true)));
         chapterList.add(new Chapter("Chapter 03","10/12/2020",new Intent(getApplicationContext(), DummyChapter03.class).putExtra("start",true)));
         chapterList.add(new Chapter("Chapter 04","10/12/2020",new Intent(getApplicationContext(), DummyChapter04.class).putExtra("start",true)));
         chapterList.add(new Chapter("Chapter 05","10/12/2020",new Intent(getApplicationContext(), DummyChapter05.class).putExtra("start",true)));
-        //Obtenir la liste
+
+        //get the List inside a ListView
         ListView chapterListView = findViewById(R.id.ep1_listview);
+        //Adapt our ListView
         chapterListView.setAdapter(new ChapterAdapter(this,chapterList));
-        //Bouton retour de la toolbar
+
+        //Return Button
         this.imageView=(ImageView)findViewById(R.id.retour);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        imageView.setOnClickListener(v -> finish());
     }
 
 }

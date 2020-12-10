@@ -1,10 +1,6 @@
 package com.example.uminekoplease;
 
-import android.annotation.SuppressLint;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,7 +9,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -30,12 +25,10 @@ public class Episode01Chapter03 extends AppCompatActivity  {
     //Initialize variable
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private ImageView imageView;
     private Intent music;
     private boolean start;
-    //private SensorService sensorService;
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    @SuppressLint("ResourceType")
+    private int number;
+    //On create
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -51,106 +44,103 @@ public class Episode01Chapter03 extends AppCompatActivity  {
         this.viewPager = findViewById(R.id.view_pager);
         this.start= getIntent().getBooleanExtra("start",true);
         this.music= new Intent(getApplicationContext(),SoundService.class);
+        //Number of Page
+        this.number = getIntent().getIntExtra("number", 0);
 
         //Initialize the List
-        ArrayList<String> arrayList = new ArrayList<>();
-
+        ArrayList<String> mArrayList = new ArrayList<>();
         //Initialize the list
-        ArrayList<Integer> arrayRessource = new ArrayList<Integer>();
+        ArrayList<Integer> mArrayPage = new ArrayList<>();
 
-                      //Link to chapter 1
-                int initId1 = getResources().getIdentifier("R.drawable.next","drawable",getPackageName());
-                if(!getIntent().getStringExtra("Prevclass").equals("false"))
-                {
-                    arrayRessource.add(initId1);
-                    //Add le fragment qui nous permettra de passer au chapitre suivant
-                    arrayList.add("Previous Chapter");
-                }
-                //Number of Page
-                int number = getIntent().getIntExtra("number",0);
+        //Add Previous fragment only if there is a previous fragment
+        if (!getIntent().getStringExtra("Prevclass").equals("false")) {
+            int initId = getResources().getIdentifier("R.drawable.next", "drawable", getPackageName());
+            mArrayPage.add(initId);
+            mArrayList.add("Previous Chapter");
+        }
 
-                //add the page and the ID in array list
-                for(int i=1;i<=number;i++)
-                {
+        //add the page and the ID in array list
+        for (int i = 1; i <= number; i++) {
 //          Create the string to find the page
-                    String page;
-                    if(i<10)
-                    {
-                        page ="0"+(i);
-                    }
-                    else
-                    {
-                        page=""+(i);
-                    }
-                    arrayList.add(page + "/"+number);
-                    String name = getIntent().getStringExtra("IDName");
-                    int drawableId = getResources().getIdentifier(name+page,"drawable",getPackageName());
-                    arrayRessource.add(drawableId);
-                }
-                //Page suivant
-                int initId = getResources().getIdentifier("R.drawable.next","drawable",getPackageName());
-                arrayRessource.add(initId);
-                //Add le fragment qui nous permettra de passer au chapitre suivant
-                arrayList.add("Next Chapter");
+            String page;
+            if (i < 10) {
+                page = "0" + (i);
+            } else {
+                page = "" + (i);
+            }
+            mArrayList.add(page + "/" + number);
+            String name = getIntent().getStringExtra("IDName");
+            int drawableId = getResources().getIdentifier(name + page, "drawable", getPackageName());
+            mArrayPage.add(drawableId);
+        }
 
-                //prepare view pager
-                prepareViewPager(viewPager, arrayList, arrayRessource);
-                //setup with view pager
-                tabLayout.setupWithViewPager(viewPager);
-                if (start==true)
-                {
-                    tabLayout.selectTab(tabLayout.getTabAt(number));
-                }
-                else
-                {
-                    tabLayout.selectTab(tabLayout.getTabAt(1));
-                }
-                //Bouton retour de la toolbar
-                imageView=(ImageView)findViewById(R.id.retour);
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        stopService(music);
-                        finish();
-                    }
-                });
+        //Next Page
+        if (!getIntent().getStringExtra("Nextclass").equals("false")) {
+            int initId = getResources().getIdentifier("R.drawable.next", "drawable", getPackageName());
+            mArrayPage.add(initId);
+            mArrayList.add("Next Chapter");
+        }
+
+        //prepare view pager
+        prepareViewPager(viewPager, mArrayList, mArrayPage);
+
+        //setup with view pager
+        tabLayout.setupWithViewPager(viewPager);
+
+        //Choose if we start at the end or not
+        if (start) {
+            tabLayout.selectTab(tabLayout.getTabAt(number));
+        } else {
+            tabLayout.selectTab(tabLayout.getTabAt(1));
+        }
+
+        //Return Button
+        ImageView imageView = (ImageView) findViewById(R.id.retour);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopService(music);
+                finish();
+            }
+        });
     }
 
     public void onStart() {
-
         super.onStart();
+        //Initialise the music when the activity start
         initMusic(getIntent().getIntegerArrayListExtra("musicName").get(1));
         listener();
     }
     private void listener()
     {
-        //Joue de la musique en fonction de la page
-        //int startID=getIntent().getIntegerArrayListExtra("musicName").get(1);
+        //Play music depending on the page
         ArrayList<Integer> temp = getIntent().getIntegerArrayListExtra("ArrayCase");
         ArrayList<Integer> ID = getIntent().getIntegerArrayListExtra("musicName");
-        //Log.d("SHOW ME MY ID YOU BASTARD STP I NEED IT :", String.valueOf(ID.get(2)));
+
+        //Check the page we're at
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 Log.d("HELLO I AM HERE",String.valueOf(ID.get(1)));
                 int numTab = tab.getPosition();
+
                 //For all case where I want to play Music
                 for(int i=0;i<getIntent().getIntExtra("musicNumber",0);i++)
                 {
-                    //Temp is my Array of case
-                    //ArrayList<Integer> temp = getIntent().getIntegerArrayListExtra("ArrayCase");
                     //If the case is good
                     if(numTab==temp.get(i))
                     {
-                        //We get the ID
-                        //int ID = getIntent().getIntegerArrayListExtra("musicName").get(i);
-                        //ID = 1 means next chapter ID = 2 means prev chapter ID=3 means stop music
+                        //We get the ID / ID = 1 means next chapter ID = 2 means prev chapter
                         if(ID.get(i)==1)
                         {
                             try {
+                                //We stop our service
+                                stopService(music);
+                                //We link to our next activity
                                 Intent intent = new Intent(getApplicationContext(),Class.forName(getIntent().getStringExtra("Nextclass")));
                                 startActivity(intent);
+                                //We finish the current
                                 finish();
                             } catch (ClassNotFoundException e) {
                                 e.printStackTrace();
@@ -159,9 +149,13 @@ public class Episode01Chapter03 extends AppCompatActivity  {
                         else if(ID.get(i)==2)
                         {
                             try {
+                                //We stop our service
+                                stopService(music);
+                                //We link to our next activity and add where to start
                                 Intent intent = new Intent(getApplicationContext(),Class.forName(getIntent().getStringExtra("Prevclass")));
                                 intent.putExtra("start",false);
                                 startActivity(intent);
+                                //We finish the current
                                 finish();
                             } catch (ClassNotFoundException e) {
                                 e.printStackTrace();
@@ -169,8 +163,8 @@ public class Episode01Chapter03 extends AppCompatActivity  {
                         }
                         else
                         {
+                            //We set music depending on the ID send
                             setMusic(music,ID.get(i));
-//                            mHtHandler.sendEmptyMessageDelayed(ID,300);
                         }
                     }
                 }
@@ -179,7 +173,8 @@ public class Episode01Chapter03 extends AppCompatActivity  {
     }
     private void initMusic(int ID)
     {
-        Log.d("SHOW ME MY ID YOU BASTARD STP I NEED IT :", String.valueOf(ID));
+        //If there is a start Music
+        Log.d("SHOW ME MY ID :", String.valueOf(ID));
         if(ID!=3)
         {
             Log.d("I PLAY START MUSIC :", String.valueOf(ID));
@@ -188,8 +183,10 @@ public class Episode01Chapter03 extends AppCompatActivity  {
     }
     private void setMusic(Intent music,int ID)
     {
+        //If my music is not the same I'm playing
             if(music.getIntExtra("ID",0)!=ID)
             {
+                //Stop Service, load another music then Start Service Again
                 stopService(music);
                 music.removeExtra("ID");
                 music.putExtra("ID",ID);
@@ -197,24 +194,24 @@ public class Episode01Chapter03 extends AppCompatActivity  {
                 Log.d("MUSIC SET :", String.valueOf(ID));
             }
     }
-    private void prepareViewPager(ViewPager viewPager, ArrayList<String> arrayList,ArrayList<Integer> arrayRessource) {
+    private void prepareViewPager(ViewPager viewPager, ArrayList<String> arrayList,ArrayList<Integer> mArrayPage) {
         //Initialize main adapter
         Episode01Chapter03.MainAdapter adapter=new Episode01Chapter03.MainAdapter(getSupportFragmentManager());
         //Initialize main Fragment
         ChapterFragment fragment = new ChapterFragment();
         //Use for loop
-        for(int i=arrayRessource.size()-1; i>=0;i--)
+        for(int i=mArrayPage.size()-1; i>=0;i--)
         {
             //Initialize bundle
             Bundle bundle = new Bundle();
             //Put string
             bundle.putString("title",arrayList.get(i));
             //put int
-            bundle.putInt("page",arrayRessource.get(i));
+            bundle.putInt("page",mArrayPage.get(i));
             //set Argument
             fragment.setArguments(bundle);
             //add fragment
-            adapter.addFragment(fragment,arrayList.get(i),arrayRessource.get(i));
+            adapter.addFragment(fragment,arrayList.get(i),mArrayPage.get(i));
             //Define new Fragment
             fragment = new ChapterFragment();
         }
@@ -233,13 +230,13 @@ public class Episode01Chapter03 extends AppCompatActivity  {
         //Initialize Array List
         ArrayList<String> arrayList = new ArrayList<>();
         List<Fragment> fragmentList = new ArrayList<>();
-        ArrayList<Integer> arrayRessource = new ArrayList<>();
+        ArrayList<Integer> mArrayPage = new ArrayList<>();
         //Create constructor
-        public void addFragment(Fragment fragment,String title,int ressource)
+        public void addFragment(Fragment fragment,String title,int page)
         {
             //Add to our Array
             arrayList.add(title);
-            arrayRessource.add(ressource);
+            mArrayPage.add(page);
             fragmentList.add(fragment);
         }
 
