@@ -14,9 +14,7 @@ public class DummyChapter03 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ArrayList<Integer> chapter01List = new ArrayList<Integer>();
         ArrayList<Integer> musicListChapter01 = new ArrayList<Integer>();
-        chapter01List.add(65); musicListChapter01.add(2);
-        chapter01List.add(67); musicListChapter01.add(3);
-        chapter01List.add(63); musicListChapter01.add(R.raw.rose);
+        chapter01List.add(64); musicListChapter01.add(R.raw.rose);
         chapter01List.add(58); musicListChapter01.add(R.raw.rose);
         chapter01List.add(57); musicListChapter01.add(R.raw.hour_of_darkness);
         chapter01List.add(54); musicListChapter01.add(R.raw.hour_of_darkness);
@@ -36,7 +34,6 @@ public class DummyChapter03 extends AppCompatActivity {
         chapter01List.add(10); musicListChapter01.add(R.raw.corridor_of_the_sands_of_purgatory);
         chapter01List.add(9); musicListChapter01.add(R.raw.hour_of_darkness);
         chapter01List.add(2); musicListChapter01.add(R.raw.hour_of_darkness);
-        chapter01List.add(0); musicListChapter01.add(1);
         Intent intent = new Intent(getApplicationContext(), Episode01Chapter03.class).putExtra("start",getIntent().getBooleanExtra("start",true)).putExtra("ChapterName","Chapter3").putExtra("IDName","umineko_v01_ch03_").putExtra("number",64).putExtra("musicNumber",chapter01List.size()).putExtra("ArrayCase",chapter01List).putExtra("musicName",musicListChapter01).putExtra("Nextclass","com.example.uminekoplease.DummyChapter04").putExtra("Prevclass","com.example.uminekoplease.DummyChapter02");
         startActivity(intent);
         finish();

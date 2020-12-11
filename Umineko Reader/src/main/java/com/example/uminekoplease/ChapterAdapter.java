@@ -46,7 +46,7 @@ public class ChapterAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 context.startActivity(current.getIntent());
-//                ((Activity)context).finish();
+               // ((Activity)context).finish();
             }
         });
         return view;
