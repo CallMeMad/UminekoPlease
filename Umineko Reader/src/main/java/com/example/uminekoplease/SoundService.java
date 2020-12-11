@@ -6,11 +6,12 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 public class SoundService extends Service {
-    private static MediaPlayer mMediaPlayer;
+    private  MediaPlayer mMediaPlayer;
     float volume;
 
     @Override
@@ -32,8 +33,11 @@ public class SoundService extends Service {
 
     @Override
     public void onDestroy() {
-
-        //new AsyncCaller().execute();
+        Log.i("I AM HERE", "HELLO");
+       // new AsyncCaller().execute();
+        for(int i=0;i<100;i++)
+        {mMediaPlayer.setVolume(volume,volume);
+            volume-=0.01f;}
         mMediaPlayer.stop();
         stopSelf();
         super.onDestroy();
@@ -55,7 +59,7 @@ public class SoundService extends Service {
         protected Void doInBackground(Void... locs) {
             do {
                 mMediaPlayer.setVolume(volume,volume);
-                volume-=0.005f;
+                volume-=0.001f;
             }while(volume>0);
             return null;
         }
