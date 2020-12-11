@@ -25,12 +25,9 @@ public class Episode01Chapter03 extends AppCompatActivity  {
     //Initialize variable
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private Intent music;
     private boolean start;
     private int number;
-    private final String ACTION_RECEIVE_NEW_MUSIC = "";
-    private final String ACTION_END_MUSIC = "";
-    //Service
+    private Intent music;
 
     //On create
     @Override
@@ -47,7 +44,7 @@ public class Episode01Chapter03 extends AppCompatActivity  {
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
         start= getIntent().getBooleanExtra("start",true);
-        music= new Intent(getApplicationContext(),SoundService.class);
+        music= new Intent(this,SoundService.class);
 
         //Number of Page
         number = getIntent().getIntExtra("number", 0);
@@ -111,6 +108,7 @@ public class Episode01Chapter03 extends AppCompatActivity  {
 
         //Return Button
         ImageView imageView = (ImageView) findViewById(R.id.retour);
+        listener(music);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,13 +118,7 @@ public class Episode01Chapter03 extends AppCompatActivity  {
         });
     }
 
-    public void onStart() {
-        super.onStart();
-        //Initialise the music when the activity start
-        listener();
-    }
-
-    private void listener() {
+    private void listener(Intent music) {
         //Play music depending on the page
         ArrayList<Integer> temp = getIntent().getIntegerArrayListExtra("ArrayCase");
         ArrayList<Integer> ID = getIntent().getIntegerArrayListExtra("musicName");
@@ -149,6 +141,7 @@ public class Episode01Chapter03 extends AppCompatActivity  {
                         //ID = 1 means next chapter ID = 2 means prev chapter ID=3 means stop music
                         if (ID.get(i) == 1) {
                             try {
+                                stopService(music);
                                 Intent intent = new Intent(getApplicationContext(), Class.forName(getIntent().getStringExtra("Nextclass")));
                                 startActivity(intent);
                                 finish();
@@ -157,6 +150,7 @@ public class Episode01Chapter03 extends AppCompatActivity  {
                             }
                         } else if (ID.get(i) == 2) {
                             try {
+                                stopService(music);
                                 Intent intent = new Intent(getApplicationContext(), Class.forName(getIntent().getStringExtra("Prevclass")));
                                 intent.putExtra("start", false);
                                 startActivity(intent);
@@ -166,7 +160,7 @@ public class Episode01Chapter03 extends AppCompatActivity  {
                             }
                         } else {
                             Log.i("MUSIC SET NUMBER", String.valueOf(i));
-                            setMusic(music, ID.get(i));
+                            setMusic(music,ID.get(i));
 //                            mHtHandler.sendEmptyMessageDelayed(ID,300);
                         }
                     }
@@ -180,10 +174,10 @@ public class Episode01Chapter03 extends AppCompatActivity  {
             if(music.getIntExtra("ID",0)!=ID)
             {
                 //Stop Service, load another music then Start Service Again
-                Log.i("MUSIC SET ","ALLELUIA");
                 stopService(music);
                 music.removeExtra("ID");
                 music.putExtra("ID",ID);
+                Log.i("MUSIC SET ","ALLELUIA");
                 startService(music);
                 //Log.d("MUSIC SET :", String.valueOf(ID));
             }
@@ -214,9 +208,9 @@ public class Episode01Chapter03 extends AppCompatActivity  {
     }
 
     protected void onDestroy() {
-        super.onDestroy();
         stopService(music);
         finish();
+        super.onDestroy();
     }
 
     private class MainAdapter extends FragmentPagerAdapter {
