@@ -18,7 +18,6 @@
         <activity android:name=".DummyChapter01" />
         <activity android:name=".DummyChapter04" />
         <activity android:name=".DummyChapter05" />
-        <activity android:name=".ShowChapter"/>
         <service
             android:name=".SoundService"
             android:enabled="true" />

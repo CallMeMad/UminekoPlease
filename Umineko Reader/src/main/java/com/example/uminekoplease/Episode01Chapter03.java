@@ -2,6 +2,7 @@ package com.example.uminekoplease;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +28,10 @@ public class Episode01Chapter03 extends AppCompatActivity  {
     private Intent music;
     private boolean start;
     private int number;
+    private final String ACTION_RECEIVE_NEW_MUSIC = "";
+    private final String ACTION_END_MUSIC = "";
+    //Service
+
     //On create
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -43,6 +48,7 @@ public class Episode01Chapter03 extends AppCompatActivity  {
         viewPager = findViewById(R.id.view_pager);
         start= getIntent().getBooleanExtra("start",true);
         music= new Intent(getApplicationContext(),SoundService.class);
+
         //Number of Page
         number = getIntent().getIntExtra("number", 0);
 
@@ -57,7 +63,9 @@ public class Episode01Chapter03 extends AppCompatActivity  {
             mArrayPage.add(initId);
             mArrayList.add("Previous Chapter");
         }
-
+        //Start Page
+        mArrayPage.add(R.drawable.cover_episode1);
+        mArrayList.add("StartPage");
         //add the page and the ID in array list
         for (int i = 1; i <= number; i++) {
 //          Create the string to find the page
@@ -72,7 +80,8 @@ public class Episode01Chapter03 extends AppCompatActivity  {
             int drawableId = getResources().getIdentifier(name + page, "drawable", getPackageName());
             mArrayPage.add(drawableId);
         }
-
+        mArrayPage.add(R.drawable.endpage);
+        mArrayList.add("EndPage");
         //Next Page
         if (!getIntent().getStringExtra("Nextclass").equals("false")) {
             int initId = getResources().getIdentifier("R.drawable.next", "drawable", getPackageName());
@@ -87,14 +96,18 @@ public class Episode01Chapter03 extends AppCompatActivity  {
         tabLayout.setupWithViewPager(viewPager);
 
         //Choose if we start at the end or not
-        if (start) {
-            tabLayout.selectTab(tabLayout.getTabAt(number));
-            initMusic(getIntent().getIntegerArrayListExtra("musicName").get(0));
-        } else {
-            tabLayout.selectTab(tabLayout.getTabAt(1));
-            int size = getIntent().getIntegerArrayListExtra("musicName").size();
-            initMusic(getIntent().getIntegerArrayListExtra("musicName").get(size-1));
-        }
+
+            //If there is a next
+            if(!getIntent().getStringExtra("Nextclass").equals("false"))
+            {
+                if (start) { tabLayout.selectTab(tabLayout.getTabAt(number+2));}
+                else{tabLayout.selectTab(tabLayout.getTabAt(1));}
+            }
+            else
+            {
+                if(start){tabLayout.selectTab(tabLayout.getTabAt(number+1));}
+                else{tabLayout.selectTab(tabLayout.getTabAt(0));}
+            }
 
         //Return Button
         ImageView imageView = (ImageView) findViewById(R.id.retour);
@@ -125,54 +138,41 @@ public class Episode01Chapter03 extends AppCompatActivity  {
                 super.onTabSelected(tab);
                 int numTab = tab.getPosition();
                 //At the end
-                if (numTab == 0) {
-                    try {
-                        //We stop our service
-                        stopService(music);
-                        //We link to our next activity
-                        Intent intent = new Intent(getApplicationContext(), Class.forName(getIntent().getStringExtra("Nextclass")));
-                        startActivity(intent);
-                        //We finish the current
-                        finish();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-                //At the start
-                else if (numTab == number+1) {
-                    try {
-                        //We stop our service
-                        stopService(music);
-                        //We link to our next activity and add where to start
-                        Intent intent = new Intent(getApplicationContext(), Class.forName(getIntent().getStringExtra("Prevclass")));
-                        intent.putExtra("start", false);
-                        startActivity(intent);
-                        //We finish the current
-                        finish();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
                 //For all case where I want to play Music
                 for (int i = 0; i < getIntent().getIntExtra("musicNumber", 0); i++) {
+                    //Temp is my Array of case
+                    //ArrayList<Integer> temp = getIntent().getIntegerArrayListExtra("ArrayCase");
                     //If the case is good
                     if (numTab == temp.get(i)) {
-                        //We set music depending on the ID send
-                        setMusic(music, ID.get(i));
+                        //We get the ID
+                        //int ID = getIntent().getIntegerArrayListExtra("musicName").get(i);
+                        //ID = 1 means next chapter ID = 2 means prev chapter ID=3 means stop music
+                        if (ID.get(i) == 1) {
+                            try {
+                                Intent intent = new Intent(getApplicationContext(), Class.forName(getIntent().getStringExtra("Nextclass")));
+                                startActivity(intent);
+                                finish();
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        } else if (ID.get(i) == 2) {
+                            try {
+                                Intent intent = new Intent(getApplicationContext(), Class.forName(getIntent().getStringExtra("Prevclass")));
+                                intent.putExtra("start", false);
+                                startActivity(intent);
+                                finish();
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.i("MUSIC SET NUMBER", String.valueOf(i));
+                            setMusic(music, ID.get(i));
+//                            mHtHandler.sendEmptyMessageDelayed(ID,300);
+                        }
                     }
                 }
             }
         });
-    }
-    private void initMusic(int ID)
-    {
-        //If there is a start Music
-       // Log.d("SHOW ME MY ID :", String.valueOf(ID));
-        if(ID!=3)
-        {
-           // Log.d("I PLAY START MUSIC :", String.valueOf(ID));
-            setMusic(music,ID);
-        }
     }
     private void setMusic(Intent music,int ID)
     {
@@ -180,6 +180,7 @@ public class Episode01Chapter03 extends AppCompatActivity  {
             if(music.getIntExtra("ID",0)!=ID)
             {
                 //Stop Service, load another music then Start Service Again
+                Log.i("MUSIC SET ","ALLELUIA");
                 stopService(music);
                 music.removeExtra("ID");
                 music.putExtra("ID",ID);
@@ -213,7 +214,6 @@ public class Episode01Chapter03 extends AppCompatActivity  {
     }
 
     protected void onDestroy() {
-
         super.onDestroy();
         stopService(music);
         finish();
