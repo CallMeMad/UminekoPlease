@@ -47,9 +47,6 @@ public class SoundService extends Service {
     public void onDestroy() {
         Log.i("I AM HERE", "HELLO");
        // new AsyncCaller().execute();
-        for(int i=0;i<100;i++)
-        {myMediaPlayer.setVolume(volume,volume);
-            volume-=0.005f;}
         if(myMediaPlayer!=null)
         {
             myMediaPlayer.stop();
@@ -76,9 +73,10 @@ public class SoundService extends Service {
         protected Void doInBackground(Void... locs) {
             do {
                 myMediaPlayer.setVolume(volume,volume);
-                volume-=0.005f;
+                volume-=0.0005f;
             }while(volume>0);
             myMediaPlayer.stop();
+            myMediaPlayer.reset();
             myMediaPlayer = new MediaPlayer();
             try {
                 myMediaPlayer.setAudioAttributes(
@@ -99,6 +97,7 @@ public class SoundService extends Service {
             myMediaPlayer.setOnPreparedListener(player -> {
                 player.setVolume(100,100);
                 volume=1;
+                player.setLooping(true);
                 player.start();
             });
             return null;
