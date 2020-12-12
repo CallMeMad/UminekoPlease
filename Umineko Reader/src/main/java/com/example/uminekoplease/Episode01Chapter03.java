@@ -174,7 +174,7 @@ public class Episode01Chapter03 extends AppCompatActivity  {
             if(music.getIntExtra("ID",0)!=ID)
             {
                 //Stop Service, load another music then Start Service Again
-                stopService(music);
+                //stopService(music);
                 music.removeExtra("ID");
                 music.putExtra("ID",ID);
                 Log.i("MUSIC SET ","ALLELUIA");
