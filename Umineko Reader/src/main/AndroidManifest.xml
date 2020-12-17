@@ -18,6 +18,10 @@
         <activity android:name=".DummyChapter01" />
         <activity android:name=".DummyChapter04" />
         <activity android:name=".DummyChapter05" />
+        <activity android:name=".DummyChapter06" />
+        <activity android:name=".DummyChapter07" />
+        <activity android:name=".DummyChapter08" />
+        <activity android:name=".DummyChapter09" />
         <service
             android:name=".SoundService"
             android:enabled="true" />

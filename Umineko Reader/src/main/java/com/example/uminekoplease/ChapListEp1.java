@@ -38,8 +38,11 @@ public class ChapListEp1 extends AppCompatActivity {
         chapterList.add(new Chapter("Chapter 02","09/12/2020",new Intent(getApplicationContext(), DummyChapter02.class).putExtra("start",true)));
         chapterList.add(new Chapter("Chapter 03","10/12/2020",new Intent(getApplicationContext(), DummyChapter03.class).putExtra("start",true)));
         chapterList.add(new Chapter("Chapter 04","10/12/2020",new Intent(getApplicationContext(), DummyChapter04.class).putExtra("start",true)));
-        chapterList.add(new Chapter("Chapter 05","10/12/2020",new Intent(getApplicationContext(), DummyChapter05.class).putExtra("start",true)));
-
+        chapterList.add(new Chapter("Chapter 05","12/12/2020",new Intent(getApplicationContext(), DummyChapter05.class).putExtra("start",true)));
+        chapterList.add(new Chapter("Chapter 06","12/12/2020",new Intent(getApplicationContext(), DummyChapter06.class).putExtra("start",true)));
+        chapterList.add(new Chapter("Chapter 07","12/12/2020",new Intent(getApplicationContext(), DummyChapter07.class).putExtra("start",true)));
+        chapterList.add(new Chapter("Chapter 08","13/12/2020",new Intent(getApplicationContext(), DummyChapter08.class).putExtra("start",true)));
+        chapterList.add(new Chapter("Chapter 09","13/12/2020",new Intent(getApplicationContext(), DummyChapter09.class).putExtra("start",true)));
         //get the List inside a ListView
         ListView chapterListView = findViewById(R.id.ep1_listview);
         //Adapt our ListView
