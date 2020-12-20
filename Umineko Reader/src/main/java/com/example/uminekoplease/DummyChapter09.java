@@ -26,8 +26,8 @@ public class DummyChapter09 extends AppCompatActivity {
         chapter01List.add(32); musicListChapter01.add(R.raw.suspicion);
         chapter01List.add(31); musicListChapter01.add(R.raw.scar_sound);
         chapter01List.add(26); musicListChapter01.add(R.raw.scar_sound);
-        chapter01List.add(25); musicListChapter01.add(R.raw.novelette);
-        chapter01List.add(21); musicListChapter01.add(R.raw.novelette);
+        chapter01List.add(25); musicListChapter01.add(R.raw.steady_pace);
+        chapter01List.add(21); musicListChapter01.add(R.raw.steady_pace);
         chapter01List.add(20); musicListChapter01.add(R.raw.fishy_aroma);
         chapter01List.add(2); musicListChapter01.add(R.raw.fishy_aroma);
         chapter01List.add(0); musicListChapter01.add(1);
@@ -39,7 +39,7 @@ public class DummyChapter09 extends AppCompatActivity {
                 .putExtra("musicNumber",chapter01List.size())
                 .putExtra("ArrayCase",chapter01List)
                 .putExtra("musicName",musicListChapter01)
-                .putExtra("Nextclass","com.example.uminekoplease.DummyChapter09")
+                .putExtra("Nextclass","com.example.uminekoplease.DummyChapter10")
                 .putExtra("Prevclass","com.example.uminekoplease.DummyChapter08");
         finish();
         startActivity(intent);

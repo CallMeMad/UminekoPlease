@@ -22,6 +22,10 @@
         <activity android:name=".DummyChapter07" />
         <activity android:name=".DummyChapter08" />
         <activity android:name=".DummyChapter09" />
+        <activity android:name=".DummyChapter10" />
+        <activity android:name=".DummyChapter11" />
+        <activity android:name=".DummyChapter12" />
+        <activity android:name=".DummyChapter13" />
         <service
             android:name=".SoundService"
             android:enabled="true" />

@@ -73,7 +73,7 @@ public class SoundService extends Service {
         protected Void doInBackground(Void... locs) {
             do {
                 myMediaPlayer.setVolume(volume,volume);
-                volume-=0.0005f;
+                volume-=0.001f;
             }while(volume>0);
             myMediaPlayer.stop();
             myMediaPlayer.reset();
