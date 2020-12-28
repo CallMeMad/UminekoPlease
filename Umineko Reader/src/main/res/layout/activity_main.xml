@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,54 +12,66 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:background="@color/black">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="880dp"
-            android:background="@color/black" />
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="220dp"
-            android:layout_marginLeft="100dp"
-            android:layout_marginRight="100dp"
-            android:layout_gravity="center_vertical"
-            android:text="@string/Episode1"
-            app:backgroundTint="#090805"/>
-
-
-        <ImageView
-            android:id="@+id/background"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/episodelist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
             android:layout_below="@id/logo"
-            android:contentDescription="Access to Scan List"
-            android:src="@drawable/background"/>
+            android:adjustViewBounds="true">
+
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="140dp"
+                android:layout_marginLeft="140dp"
+                android:layout_marginTop="104dp"
+                android:text="@string/Episode1"
+                app:backgroundTint="#090805"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/background"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/go_to_my_episode"
+                android:src="@drawable/background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:id="@+id/logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:src="@drawable/logo"/>
+            android:contentDescription="@string/legend_of_the_golden_witch"
+            android:src="@drawable/logo" />
 
         <ImageView
             android:id="@+id/music"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/background"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="3dp"
+            android:layout_height="match_parent"
+            android:layout_below="@id/episodelist"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/legend_of_the_golden_witch"
             android:maxWidth="60dp"
             android:maxHeight="60dp"
+            android:layout_marginLeft="5dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/music1"/>
+            android:src="@drawable/music1" />
 
     </RelativeLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
