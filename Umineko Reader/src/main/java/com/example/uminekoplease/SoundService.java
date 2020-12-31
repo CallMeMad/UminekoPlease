@@ -25,6 +25,7 @@ public class SoundService extends Service {
     private static final String TAG = "tag";
     private Context context;
     private AssetFileDescriptor afd;
+    private boolean looping;
     private int ID;
     @Override
     public void onCreate(){
@@ -38,6 +39,7 @@ public class SoundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
             ID=intent.getIntExtra("ID",0);
+            looping= intent.getBooleanExtra("looping",true);
             new AsyncCaller().execute();
             return START_STICKY;
     }
@@ -97,7 +99,7 @@ public class SoundService extends Service {
             myMediaPlayer.setOnPreparedListener(player -> {
                 player.setVolume(100,100);
                 volume=1;
-                player.setLooping(true);
+                player.setLooping(looping);
                 player.start();
             });
             return null;

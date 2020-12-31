@@ -5,9 +5,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/app_icon"
         android:label="@string/UminekoReader"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UminekoPlease">
         <activity android:name=".DummyChapter02" />
@@ -27,6 +27,15 @@
         <activity android:name=".DummyChapter12" />
         <activity android:name=".DummyChapter13" />
         <activity android:name=".DummyChapter14" />
+        <activity android:name=".DummyChapter15" />
+        <activity android:name=".DummyChapter16" />
+        <activity android:name=".DummyChapter17" />
+        <activity android:name=".DummyChapter18" />
+        <activity android:name=".DummyChapter19" />
+        <activity android:name=".DummyChapter20" />
+        <activity android:name=".DummyChapter21" />
+        <activity android:name=".DummyChapter22" />
+        <activity android:name=".DummyChapter23" />
         <service
             android:name=".SoundService"
             android:enabled="true" />

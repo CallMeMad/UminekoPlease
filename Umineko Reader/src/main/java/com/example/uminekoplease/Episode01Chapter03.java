@@ -177,6 +177,14 @@ public class Episode01Chapter03 extends AppCompatActivity  {
                 //stopService(music);
                 music.removeExtra("ID");
                 music.putExtra("ID",ID);
+                if(ID == R.raw.stab)
+                {
+                    music.putExtra("looping",false);
+                }
+                else
+                {
+                    music.putExtra("looping",true);
+                }
                 Log.i("MUSIC SET ","ALLELUIA");
                 startService(music);
                 //Log.d("MUSIC SET :", String.valueOf(ID));

@@ -41,7 +41,7 @@ public class DummyChapter14 extends AppCompatActivity {
                 .putExtra("musicNumber",chapter01List.size())
                 .putExtra("ArrayCase",chapter01List)
                 .putExtra("musicName",musicListChapter01)
-                .putExtra("Nextclass","com.example.uminekoplease.DummyChapter14")
+                .putExtra("Nextclass","com.example.uminekoplease.DummyChapter15")
                 .putExtra("Prevclass","com.example.uminekoplease.DummyChapter13");
         finish();
         startActivity(intent);
