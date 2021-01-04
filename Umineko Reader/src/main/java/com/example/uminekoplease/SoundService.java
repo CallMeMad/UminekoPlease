@@ -27,10 +27,17 @@ public class SoundService extends Service {
     private AssetFileDescriptor afd;
     private boolean looping;
     private int ID;
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onCreate(){
         super.onCreate();
         myMediaPlayer = new MediaPlayer();
+        myMediaPlayer.setAudioAttributes(
+                new AudioAttributes
+                        .Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build());
         context = getApplicationContext();
         this.volume=1;
     }
@@ -73,19 +80,18 @@ public class SoundService extends Service {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         protected Void doInBackground(Void... locs) {
-            do {
-                myMediaPlayer.setVolume(volume,volume);
-                volume-=0.001f;
-            }while(volume>0);
-            myMediaPlayer.stop();
-            myMediaPlayer.reset();
-            myMediaPlayer = new MediaPlayer();
+            //If a media is playing
+            if(myMediaPlayer.isPlaying())
+            {
+                do {
+                    myMediaPlayer.setVolume(volume,volume);
+                    volume-=0.0001f;
+                }while(volume>0);
+                myMediaPlayer.stop();
+                myMediaPlayer.reset();
+            }
+            //Add the new media to be read
             try {
-                myMediaPlayer.setAudioAttributes(
-                        new AudioAttributes
-                                .Builder()
-                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                .build());
                 afd = context.getResources().openRawResourceFd(ID);
                 if (afd == null) {Log.i(TAG,"afd null");}
                 myMediaPlayer.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
@@ -97,10 +103,16 @@ public class SoundService extends Service {
             }
             //mp3 will be started after completion of preparing...
             myMediaPlayer.setOnPreparedListener(player -> {
-                player.setVolume(100,100);
-                volume=1;
+                player.setVolume(0,0);
                 player.setLooping(looping);
+                volume=0;
                 player.start();
+                //Fade In
+                while (volume<1)
+                {
+                    volume+=0.001f;
+                    myMediaPlayer.setVolume(volume,volume);
+                }
             });
             return null;
         }

@@ -1,0 +1,14 @@
+Volume 01 Chapter 01
+umineko_v01_ch01_
+30
+-false
++Volume 1 Chapter 02
+31 rengoku
+29 rengoku
+28 sea
+13 sea
+12 hour_of_darkness
+2 hour_of_darkness
+0 1
+/
+

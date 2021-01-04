@@ -36,6 +36,7 @@
         <activity android:name=".DummyChapter21" />
         <activity android:name=".DummyChapter22" />
         <activity android:name=".DummyChapter23" />
+        <activity android:name=".ChapterReader"/>
         <service
             android:name=".SoundService"
             android:enabled="true" />

@@ -23,10 +23,16 @@ public class DummyChapter01 extends AppCompatActivity {
             chapter01List.add(12); musicListChapter01.add(R.raw.hour_of_darkness);
             chapter01List.add(2);  musicListChapter01.add(R.raw.hour_of_darkness);
             chapter01List.add(0);  musicListChapter01.add(1);
-            Intent intent = new Intent(getApplicationContext(), Episode01Chapter03.class).putExtra("start",getIntent().getBooleanExtra("start",true)).putExtra("ChapterName","Chapter1").putExtra("IDName","umineko_v01_ch01_").putExtra("number",30).putExtra("musicNumber",chapter01List.size()).putExtra("ArrayCase",chapter01List).putExtra("musicName",musicListChapter01).putExtra("Nextclass","com.example.uminekoplease.DummyChapter02").putExtra("Prevclass","false");
+            Intent intent = new Intent(getApplicationContext(), Episode01Chapter03.class)
+                    .putExtra("start",getIntent().getBooleanExtra("start",true))
+                    .putExtra("ChapterName","Chapter1").putExtra("IDName","umineko_v01_ch01_")
+                    .putExtra("number",30)
+                    .putExtra("musicNumber",chapter01List.size())
+                    .putExtra("ArrayCase",chapter01List)
+                    .putExtra("musicName",musicListChapter01).putExtra("Nextclass","com.example.uminekoplease.DummyChapter02")
+                    .putExtra("Prevclass","false");
             startActivity(intent);
             finish();
         }
-
     }
 }

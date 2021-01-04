@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity{
     //Variable Declaration
     private Button button;
+    private Button button2;
     private ImageView imageView;
     private boolean toggle;
     private Intent music;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity{
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(toggle==false)
+                if(!toggle)
                 {
                     toggle=true;
                     startService(music);
@@ -52,17 +53,24 @@ public class MainActivity extends AppCompatActivity{
         });
 
         //Button to go to my chapter list
-        this.button=(Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-               Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
-               stopService(music);
-               toggle=false;
-               startActivity(ChapListEp1);
-            }
+        this.button= findViewById(R.id.button);
+        button.setText("Episode 1");
+        button.setOnClickListener(view -> {
+           Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
+           stopService(music);
+           toggle=false;
+           startActivity(ChapListEp1);
+        });
+
+        //Button to go to my chapter list
+        this.button2= findViewById(R.id.button2);
+        button2.setText("Episode 2");
+        button2.setOnClickListener(view -> {
+            Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
+            stopService(music);
+            toggle=false;
+            ChapListEp1.putExtra("String","Episode 2");
+            startActivity(ChapListEp1);
         });
     }
     //Destructor

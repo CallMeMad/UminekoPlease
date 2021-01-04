@@ -15,7 +15,7 @@
         android:gravity="center_horizontal"
         android:background="@color/black">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:id="@+id/episodelist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,13 +27,23 @@
                 android:id="@+id/button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="140dp"
-                android:layout_marginLeft="140dp"
-                android:layout_marginTop="104dp"
+                android:layout_marginTop="50dp"
                 android:text="@string/Episode1"
                 app:backgroundTint="#090805"
+                android:layout_centerHorizontal="true"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Episode2"
+                app:backgroundTint="#090805"
+                android:layout_below="@id/button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_centerHorizontal="true"/>
 
             <ImageView
                 android:id="@+id/background"
@@ -50,7 +60,7 @@
                 app:layout_constraintVertical_bias="1.0" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/logo"
