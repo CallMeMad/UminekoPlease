@@ -31,10 +31,8 @@ public class ChapterReader extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private int pageNumber;
-    private boolean startingPoint;
     private String IDName;
-    private InputStream input=null;
-    private MediaListener mMediaListener;
+    private Intent music;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -43,17 +41,17 @@ public class ChapterReader extends AppCompatActivity {
 
         //Initialize other Data
         ArrayList<Integer> pageMusicList = new ArrayList<Integer>();
-        ArrayList<String> musicToPageList = new ArrayList<String>();
+        ArrayList<Integer> musicToPageList = new ArrayList<>();
         String PrevChapter="";
         String NextChapter="";
         String VolumeName  = getIntent().getStringExtra("Volume");
         String ChapterName = getIntent().getStringExtra("ChapterName");
         String Test = VolumeName + " " + ChapterName;
-        Integer Cover1 = getIntent().getIntExtra("Cover1",0);
-        Integer Cover2 = getIntent().getIntExtra("Cover2",0);
+        Integer Cover1=0 ;
+        Integer Cover2=0;
 
         //Read the File and get the data
-        input=getResources().openRawResource(R.raw.data);
+        InputStream input = getResources().openRawResource(R.raw.data);
         try{
             if(input !=null)
             {
@@ -65,30 +63,31 @@ public class ChapterReader extends AppCompatActivity {
                 {
                     Log.i("Test2 ",myString);
                 }
+                IDName= reader.readLine();
+                Log.i("IDName ",IDName);
+                pageNumber= Integer.parseInt(reader.readLine());
+                Log.i("pageNumber ", String.valueOf(pageNumber));
+                Cover1 = getResources().getIdentifier(reader.readLine(), "drawable", this.getPackageName());
+                Log.i("Cover1 ", String.valueOf(Cover1));
+                Cover2 = getResources().getIdentifier(reader.readLine(), "drawable", this.getPackageName());
+                Log.i("Cover2 ", String.valueOf(Cover2));
+                PrevChapter=reader.readLine().substring(1);
+                Log.i("Prev ",PrevChapter);
+                NextChapter=reader.readLine().substring(1);
+                Log.i("Next ",NextChapter);
                 while(!(myString = reader.readLine()).equals("/"))
                 {
-                    if(counter==0){
-                        IDName=myString;
-                        Log.i("IDName ",myString);}
-                    else if(counter==1){
-                        pageNumber= Integer.parseInt(myString);
-                        //Log.i("pageNumber ", String.valueOf(pageNumber));
-                    }
-                    else if(counter==2){
-                        PrevChapter=myString.substring(1);
-                        //Log.i("PrevChapter ",PrevChapter);
-                    }
-                    else if(counter==3){
-                        NextChapter=myString.substring(1);
-                       //  ;
-                        }
-                    else {
-                        String[] values =myString.split(" ");
-                        pageMusicList.add(Integer.parseInt(values[0]));
-                        musicToPageList.add(values[1]);
-                        //Log.i("value1 ",String.valueOf(Integer.parseInt(values[0])));
-                        //Log.i("value2 ",String.valueOf(Integer.parseInt(values[1])));
-                    }
+                   String[] values =myString.split(" ");
+                   pageMusicList.add(Integer.parseInt(values[0]));
+                   if(values[1].equals("1") || values[1].equals("2")){musicToPageList.add(Integer.parseInt(values[1]));}
+                   else
+                   {
+                       int soundId = getResources().getIdentifier(values[1], "raw", this.getPackageName());
+                       musicToPageList.add(soundId);
+                       Log.i("value1 ",String.valueOf(Integer.parseInt(values[0])));
+                       Log.i("value2 ",values[1]);
+                   }
+
                     counter++;
                 }
                 reader.close();
@@ -107,8 +106,8 @@ public class ChapterReader extends AppCompatActivity {
         //assign Variable
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
-        startingPoint = getIntent().getBooleanExtra("start",true);
-        mMediaListener = new MediaListener(getResources());
+        boolean startingPoint = getIntent().getBooleanExtra("start", true);
+        music= new Intent(this,SoundService.class);
 
         //Initialize the List
         ArrayList<String> mArrayList = new ArrayList<>();
@@ -172,12 +171,12 @@ public class ChapterReader extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMediaListener.stopMusic();
+                stopService(music);
                 finish();
             }
         });
     }
-    private void listener(ArrayList<Integer> temp,ArrayList<String> ID) {
+    private void listener(ArrayList<Integer> temp,ArrayList<Integer> ID) {
         //Play music depending on the page
         //Check the page we're at
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
@@ -191,53 +190,72 @@ public class ChapterReader extends AppCompatActivity {
                     //Temp is my Array of case
                     //ArrayList<Integer> temp = getIntent().getIntegerArrayListExtra("ArrayCase");
                     //If the case is good
-                    if (numTab == temp.get(i)) {
+                    if (numTab == temp.get(i))
+                    {
                         //We get the ID
                         //int ID = getIntent().getIntegerArrayListExtra("musicName").get(i);
                         //ID = 1 means next chapter ID = 2 means prev chapter ID=3 means stop music
-                        if (ID.get(i).equals("1")) {
-                            try {
-                                mMediaListener.stopMusic();
-                                Intent intent = new Intent(getApplicationContext(), Class.forName(getIntent().getStringExtra("Nextclass")));
+                        if (ID.get(i)==1) {
+                                stopService(music);
+                                String[] ChapterName = getIntent().getStringExtra("ChapterName").split("0");
+                                if(ChapterName.length==1){ChapterName=getIntent().getStringExtra("ChapterName").split("r ");ChapterName[0]=ChapterName[0]+"r ";}
+                                Log.i("CHAPTERNAME",ChapterName[0]);
+                                Integer x =Integer.parseInt(ChapterName[1]);
+                                x+=1;
+                                String ChapterNameFin;
+                                if(x>=10){ ChapterNameFin= ChapterName[0]+x;}
+                                else{ChapterNameFin = ChapterName[0]+"0"+x;};
+                                Log.i("STRING",ChapterNameFin);
+                                Intent intent =new Intent(getApplicationContext(), ChapterReader.class).putExtra("start",true)
+                                        .putExtra("Volume",getIntent().getStringExtra("Volume")).putExtra("ChapterName",ChapterNameFin);
                                 startActivity(intent);
                                 finish();
-                            } catch (ClassNotFoundException e) {
-                                e.printStackTrace();
-                            }
-                        } else if (ID.get(i).equals("2")) {
-                            try {
-                                mMediaListener.stopMusic();
-                                Intent intent = new Intent(getApplicationContext(), Class.forName(getIntent().getStringExtra("Prevclass")));
-                                intent.putExtra("start", false);
+                        } else if (ID.get(i)==2) {
+                                stopService(music);
+                                String[] ChapterName = getIntent().getStringExtra("ChapterName").split("0");
+                                if(ChapterName.length==1){ChapterName=getIntent().getStringExtra("ChapterName").split("r ");ChapterName[0]=ChapterName[0]+"r ";}
+                                Log.i("CHAPTERNAME",ChapterName[0]);
+                                Integer x =Integer.parseInt(ChapterName[1]);
+                                x-=1;
+                                String ChapterNameFin;
+                                if(x>=10){ ChapterNameFin= ChapterName[0]+x;}
+                                else{ChapterNameFin = ChapterName[0]+"0"+x;};
+                                Log.i("STRING",ChapterNameFin);
+                                Intent intent =new Intent(getApplicationContext(), ChapterReader.class).putExtra("start",false)
+                                        .putExtra("Volume",getIntent().getStringExtra("Volume")).putExtra("ChapterName",ChapterNameFin);
                                 startActivity(intent);
                                 finish();
-                            } catch (ClassNotFoundException e) {
-                                e.printStackTrace();
                             }
-                        } else {
-                            Log.i("MUSIC SET NUMBER", String.valueOf(i));
-                            setMusic(ID.get(i));
-//                            mHtHandler.sendEmptyMessageDelayed(ID,300);
-                        }
+                         else
+                         {
+                           Log.i("MUSIC SET NUMBER", String.valueOf(i));
+                           setMusic(music, ID.get(i));
+                         }
                     }
                 }
             }
         });
     }
-    private void setMusic(String ID)
+    private void setMusic(Intent music,int ID)
     {
-        int soundId = getResources().getIdentifier(ID, "raw", this.getPackageName());
         //If my music is not the same I'm playing
-        if(mMediaListener.getID()!=soundId)
+        if(music.getIntExtra("ID",0)!=ID)
         {
-            if(soundId == R.raw.stab)
+            //Stop Service, load another music then Start Service Again
+            //stopService(music);
+            music.removeExtra("ID");
+            music.putExtra("ID",ID);
+            if(ID == R.raw.stab || ID == R.raw.slaphit)
             {
-                mMediaListener.setmMediaPlayer(soundId,false);
+                music.putExtra("looping",false);
             }
             else
             {
-                mMediaListener.setmMediaPlayer(soundId,true);
+                music.putExtra("looping",true);
             }
+            Log.i("MUSIC SET ", String.valueOf(ID));
+            startService(music);
+            //Log.d("MUSIC SET :", String.valueOf(ID));
         }
     }
     private void prepareViewPager(ViewPager viewPager, ArrayList<String> arrayList,ArrayList<Integer> mArrayPage) {
@@ -266,7 +284,7 @@ public class ChapterReader extends AppCompatActivity {
     }
 
     protected void onDestroy() {
-        mMediaListener.stopMusic();
+        stopService(music);
         finish();
         super.onDestroy();
     }

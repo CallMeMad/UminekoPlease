@@ -10,32 +10,6 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UminekoPlease">
-        <activity android:name=".DummyChapter02" />
-        <activity android:name=".DummyChapter03" />
-        <activity
-            android:name=".Episode01Chapter03"
-            android:noHistory="true" />
-        <activity android:name=".DummyChapter01" />
-        <activity android:name=".DummyChapter04" />
-        <activity android:name=".DummyChapter05" />
-        <activity android:name=".DummyChapter06" />
-        <activity android:name=".DummyChapter07" />
-        <activity android:name=".DummyChapter08" />
-        <activity android:name=".DummyChapter09" />
-        <activity android:name=".DummyChapter10" />
-        <activity android:name=".DummyChapter11" />
-        <activity android:name=".DummyChapter12" />
-        <activity android:name=".DummyChapter13" />
-        <activity android:name=".DummyChapter14" />
-        <activity android:name=".DummyChapter15" />
-        <activity android:name=".DummyChapter16" />
-        <activity android:name=".DummyChapter17" />
-        <activity android:name=".DummyChapter18" />
-        <activity android:name=".DummyChapter19" />
-        <activity android:name=".DummyChapter20" />
-        <activity android:name=".DummyChapter21" />
-        <activity android:name=".DummyChapter22" />
-        <activity android:name=".DummyChapter23" />
         <activity android:name=".ChapterReader"/>
         <service
             android:name=".SoundService"

@@ -53,7 +53,7 @@
             android:contentDescription="@string/Episode1"
             android:maxWidth="190dp"
             android:maxHeight="190dp"
-            android:src="@drawable/cover_episode1">
+            android:src="@drawable/cover1">
         </ImageView>
         <LinearLayout
             android:layout_width="wrap_content"

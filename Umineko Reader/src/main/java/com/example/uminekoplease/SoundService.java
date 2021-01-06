@@ -85,11 +85,11 @@ public class SoundService extends Service {
             {
                 do {
                     myMediaPlayer.setVolume(volume,volume);
-                    volume-=0.0001f;
+                    volume-=0.002f;
                 }while(volume>0);
                 myMediaPlayer.stop();
-                myMediaPlayer.reset();
             }
+            myMediaPlayer.reset();
             //Add the new media to be read
             try {
                 afd = context.getResources().openRawResourceFd(ID);
@@ -103,16 +103,7 @@ public class SoundService extends Service {
             }
             //mp3 will be started after completion of preparing...
             myMediaPlayer.setOnPreparedListener(player -> {
-                player.setVolume(0,0);
-                player.setLooping(looping);
-                volume=0;
-                player.start();
-                //Fade In
-                while (volume<1)
-                {
-                    volume+=0.001f;
-                    myMediaPlayer.setVolume(volume,volume);
-                }
+                new FadeIn().execute();
             });
             return null;
         }
@@ -124,6 +115,27 @@ public class SoundService extends Service {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
+        }
+    }
+    private class FadeIn extends AsyncTask<Void, Void, Void> {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        protected Void doInBackground(Void... locs) {
+            //If a media is playing
+            //Fade In
+
+            myMediaPlayer.setVolume(0, 0);
+            myMediaPlayer.setLooping(looping);
+            volume = 0;
+            myMediaPlayer.start();
+            while (volume < 1) {
+                volume += 0.01f;
+
+                myMediaPlayer.setVolume(volume, volume);
+            }
+            volume = 1;
+            myMediaPlayer.setVolume(volume, volume);
+            return null;
         }
     }
 }

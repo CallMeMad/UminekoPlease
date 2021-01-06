@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity{
            Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
            stopService(music);
            toggle=false;
+           ChapListEp1.putExtra("String","Episode 1");
            startActivity(ChapListEp1);
         });
 
