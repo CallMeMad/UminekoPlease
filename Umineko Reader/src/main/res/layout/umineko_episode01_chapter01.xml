@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Episode01Chapter03"
+    android:layout_centerHorizontal="true"
     android:background="@color/black">
 
     <include
@@ -15,19 +15,20 @@
         layout="@layout/appbar">
     </include>
 
+    <androidx.viewpager.widget.ViewPager
+        android:layout_width="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_height="match_parent"
+        android:id="@+id/view_pager"/>
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tab_layout"
         android:visibility="invisible"
         android:layoutDirection="ltr"
+        android:layout_gravity="center_vertical"
         app:tabTextColor="@color/white"
         app:tabIndicatorColor="@android:color/white"
         app:tabSelectedTextColor="@android:color/white"
         android:background="@color/black"/>
-
-    <androidx.viewpager.widget.ViewPager
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/view_pager"/>
 </LinearLayout>

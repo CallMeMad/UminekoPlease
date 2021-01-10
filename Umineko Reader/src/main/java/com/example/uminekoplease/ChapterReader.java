@@ -1,4 +1,5 @@
 package com.example.uminekoplease;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -94,6 +95,7 @@ public class ChapterReader extends AppCompatActivity {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        //Read the file from a jsonObject
         }
 
         setContentView(R.layout.umineko_episode01_chapter01);
