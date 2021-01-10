@@ -18,6 +18,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.uminekoplease.json.EpisodeJson;
+import com.example.uminekoplease.json.JSONResourceReader;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.BufferedReader;
@@ -50,6 +52,9 @@ public class ChapterReader extends AppCompatActivity {
         String Test = VolumeName + " " + ChapterName;
         String Cover1="";
         String Cover2="";
+
+        JSONResourceReader jsonReader = new JSONResourceReader(getResources(), R.raw.ep1);
+        EpisodeJson jsonObj = jsonReader.constructUsingGson(EpisodeJson.class);
 
         //Read the File and get the data
         InputStream input = getResources().openRawResource(R.raw.data);
