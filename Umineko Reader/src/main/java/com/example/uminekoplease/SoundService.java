@@ -93,7 +93,9 @@ public class SoundService extends Service {
             myMediaPlayer.reset();
             //Add the new media to be read
             try {
-                AssetManager assets = getAssets();
+                // FIXME: Use path "audio/bgm/umib_" + ID + ".ogg" instead;
+                // TODO: Use path "audio/se/umilse_" + SE_ID + ".ogg" for Sound effects (they all are in loop)
+                // TODO: Use path "voice/ep-" + EP + "/ch-"+ CH + "/"+PAGE_FILENAME+".ogg" for voice when voice = true
                 afd = getAssets().openFd("audio/"+ID+".mp3");
                 if (afd == null) {Log.i(TAG,"afd null");}
                 myMediaPlayer.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
