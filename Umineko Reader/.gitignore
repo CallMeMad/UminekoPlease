@@ -1,2 +1,5 @@
 /build
-/src/main/assets/audio/*/*
+/src/main/assets/audio/bgm/*
+/src/main/assets/audio/se/*
+/src/main/assets/audio/voice/*
+/src/main/assets/img/ep-*/vol-*/chapter-*/*
