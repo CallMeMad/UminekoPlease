@@ -72,6 +72,8 @@ public class ChapterFragment extends Fragment {
 
         InputStream ims = null;
         try {
+            // FIXME : "img/ep-"+EP+"/vol-"+VOL+"/ch-"+CH+"/"+pageFilename+".jpg"
+            // This can be passed as a single extra param for easier manipulation (the whole path without img/ and jpg)
             ims = getActivity().getAssets().open("img/"+getArguments().getString("page")+".jpg");
             Drawable d = Drawable.createFromStream(ims, null);
             imageView.setImageDrawable(d);

@@ -53,8 +53,12 @@ public class ChapterReader extends AppCompatActivity {
         String Cover1="";
         String Cover2="";
 
+        // FIXME: Import the correct json file (ep1, ep2, etc)
         JSONResourceReader jsonReader = new JSONResourceReader(getResources(), R.raw.ep1);
         EpisodeJson jsonObj = jsonReader.constructUsingGson(EpisodeJson.class);
+        // FIXME: Implement
+        // Get pages from jsonObj.getPages(ChapterName)
+        // Loop through it, you have page.bgm (String) and page.page (String) the image filename, skip voice and SE for now
 
         //Read the File and get the data
         InputStream input = getResources().openRawResource(R.raw.data);
