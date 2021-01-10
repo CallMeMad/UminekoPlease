@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -17,15 +15,6 @@
 
         <RelativeLayout
             android:id="@+id/episodelist"
-        android:gravity="center_horizontal"/>
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="880dp"
-            android:background="@color/black" />
-        <RelativeLayout
-            android:id="@+id/episodelist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/logo"
@@ -33,6 +22,7 @@
 
 
             <Button
+                android:id="@+id/button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
@@ -46,20 +36,27 @@
                 android:id="@+id/button2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/Episode2"
                 app:backgroundTint="#090805"
                 android:layout_below="@id/button"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_centerHorizontal="true"/>
-            <Button
-                android:id="@+id/buttonHD"
+
+            <ImageView
+                android:id="@+id/background"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:backgroundTint="#090805"
-                android:layout_below="@id/button2"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/go_to_my_episode"
+                android:src="@drawable/background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_centerHorizontal="true"/>
+                app:layout_constraintVertical_bias="1.0" />
+
 
         </RelativeLayout>
 
