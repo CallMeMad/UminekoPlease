@@ -14,7 +14,6 @@
         android:id="@+id/mytoolbar"
         layout="@layout/appbar">
     </include>
-
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:layout_gravity="center_vertical"
