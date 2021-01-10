@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity{
     //Variable Declaration
     private Button button;
     private Button button2;
+    private Button HDbutton;
     private ImageView imageView;
     private boolean toggle;
     private Intent music;
@@ -73,6 +74,16 @@ public class MainActivity extends AppCompatActivity{
             ChapListEp1.putExtra("String","Episode 2");
             startActivity(ChapListEp1);
         });
+        //Button to go to my chapter list
+        this.HDbutton= findViewById(R.id.buttonHD);
+        HDbutton.setText("Episode 1 HD");
+        HDbutton.setOnClickListener(view -> {
+            Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
+            stopService(music);
+            toggle=false;
+            ChapListEp1.putExtra("String","Episode 1 HD");
+            startActivity(ChapListEp1);
+        });
     }
     //Destructor
     protected void onDestroy() {
@@ -104,5 +115,4 @@ public class MainActivity extends AppCompatActivity{
 
         return super.onOptionsItemSelected(item);
     }
-
 }
