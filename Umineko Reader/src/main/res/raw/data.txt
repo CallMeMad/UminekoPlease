@@ -1,13 +1,13 @@
 Volume 01 Chapter 01
-umineko_v01_ch01_
-30
+v01_ch01_
+27
 cover1
 cover_maria
 -false
 +Volume 1 Chapter 02
-31 rengoku
-29 rengoku
-28 sea
+28 rengoku
+27 rengoku
+26 sea
 13 sea
 12 hour_of_darkness2
 2 hour_of_darkness2
