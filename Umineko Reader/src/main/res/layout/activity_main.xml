@@ -42,6 +42,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_centerHorizontal="true"/>
+            <Button
+                android:id="@+id/buttonHD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="HD Button"
+                app:backgroundTint="#090805"
+                android:layout_below="@id/button2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_centerHorizontal="true"/>
 
             <ImageView
                 android:id="@+id/background"
