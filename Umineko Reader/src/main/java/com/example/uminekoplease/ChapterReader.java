@@ -47,8 +47,8 @@ public class ChapterReader extends AppCompatActivity {
         String VolumeName  = getIntent().getStringExtra("Volume");
         String ChapterName = getIntent().getStringExtra("ChapterName");
         String Test = VolumeName + " " + ChapterName;
-        Integer Cover1=0 ;
-        Integer Cover2=0;
+        String Cover1="";
+        String Cover2="";
 
         //Read the File and get the data
         InputStream input = getResources().openRawResource(R.raw.data);
@@ -67,9 +67,9 @@ public class ChapterReader extends AppCompatActivity {
                 Log.i("IDName ",IDName);
                 pageNumber= Integer.parseInt(reader.readLine());
                 Log.i("pageNumber ", String.valueOf(pageNumber));
-                Cover1 = getResources().getIdentifier(reader.readLine(), "drawable", this.getPackageName());
+                Cover1 = reader.readLine();
                 Log.i("Cover1 ", String.valueOf(Cover1));
-                Cover2 = getResources().getIdentifier(reader.readLine(), "drawable", this.getPackageName());
+                Cover2 = reader.readLine();
                 Log.i("Cover2 ", String.valueOf(Cover2));
                 PrevChapter=reader.readLine().substring(1);
                 Log.i("Prev ",PrevChapter);
@@ -111,12 +111,11 @@ public class ChapterReader extends AppCompatActivity {
         //Initialize the List
         ArrayList<String> mArrayList = new ArrayList<>();
         //Initialize the list
-        ArrayList<Integer> mArrayPage = new ArrayList<>();
+        ArrayList<String> mArrayPage = new ArrayList<>();
 
         //Add Previous fragment only if there is a previous fragment
         if (!PrevChapter.equals("false")) {
-            int initId = getResources().getIdentifier("R.drawable.next", "drawable", getPackageName());
-            mArrayPage.add(initId);
+            mArrayPage.add("next");
             mArrayList.add("Previous Chapter");
         }
         //Start Page
@@ -132,15 +131,15 @@ public class ChapterReader extends AppCompatActivity {
                 page = "" + (i);
             }
             mArrayList.add(page + "/" + pageNumber);
-            int drawableId = getResources().getIdentifier(IDName + page, "drawable", getPackageName());
-            mArrayPage.add(drawableId);
+            //int drawableId = getResources().getIdentifier(IDName + page, "drawable", getPackageName());
+            String drawablePath = IDName + page;
+            mArrayPage.add(drawablePath);
         }
         mArrayPage.add(Cover2);
         mArrayList.add("EndPage");
         //Next Page
         if (!NextChapter.equals("false")) {
-            int initId = getResources().getIdentifier("R.drawable.next", "drawable", getPackageName());
-            mArrayPage.add(initId);
+            mArrayPage.add("next");
             mArrayList.add("Next Chapter");
         }
 
@@ -257,7 +256,7 @@ public class ChapterReader extends AppCompatActivity {
             //Log.d("MUSIC SET :", String.valueOf(ID));
         }
     }
-    private void prepareViewPager(ViewPager viewPager, ArrayList<String> arrayList,ArrayList<Integer> mArrayPage) {
+    private void prepareViewPager(ViewPager viewPager, ArrayList<String> arrayList,ArrayList<String> mArrayPage) {
         //Initialize main adapter
         ChapterReader.MainAdapter adapter=new ChapterReader.MainAdapter(getSupportFragmentManager());
         //Initialize main Fragment
@@ -270,7 +269,7 @@ public class ChapterReader extends AppCompatActivity {
             //Put string
             bundle.putString("title",arrayList.get(i));
             //put int
-            bundle.putInt("page",mArrayPage.get(i));
+            bundle.putString("page",mArrayPage.get(i));
             //set Argument
             fragment.setArguments(bundle);
             //add fragment
@@ -292,10 +291,10 @@ public class ChapterReader extends AppCompatActivity {
         //Initialize Array List
         ArrayList<String> arrayList = new ArrayList<>();
         List<Fragment> fragmentList = new ArrayList<>();
-        ArrayList<Integer> mArrayPage = new ArrayList<>();
+        ArrayList<String> mArrayPage = new ArrayList<>();
 
         //Create constructor
-        public void addFragment(Fragment fragment, String title, int page) {
+        public void addFragment(Fragment fragment, String title, String page) {
             //Add to our Array
             arrayList.add(title);
             mArrayPage.add(page);
