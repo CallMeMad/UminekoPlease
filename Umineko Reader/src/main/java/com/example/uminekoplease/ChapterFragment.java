@@ -1,5 +1,7 @@
 package com.example.uminekoplease;
 
+import android.content.res.AssetManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,11 +42,11 @@ public class ChapterFragment extends Fragment {
      * @return A new instance of fragment ChapterFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ChapterFragment newInstance(String param1, int param2) {
+    public static ChapterFragment newInstance(String param1, String param2) {
         ChapterFragment fragment = new ChapterFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
-        args.putInt(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,7 +69,15 @@ public class ChapterFragment extends Fragment {
         //Initialize and assign variable
         TextView textView = view.findViewById(R.id.text_view);
         ImageView imageView=view.findViewById(R.id.image);
-        imageView.setImageResource(getArguments().getInt("page"));
+
+        InputStream ims = null;
+        try {
+            ims = getActivity().getAssets().open("img/"+getArguments().getString("page")+".jpg");
+            Drawable d = Drawable.createFromStream(ims, null);
+            imageView.setImageDrawable(d);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //Get Title
         String sTitle = getArguments().getString("title");
 
