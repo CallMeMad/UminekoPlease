@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
@@ -26,7 +27,7 @@ public class SoundService extends Service {
     private Context context;
     private AssetFileDescriptor afd;
     private boolean looping;
-    private int ID;
+    private String ID;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -45,7 +46,7 @@ public class SoundService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-            ID=intent.getIntExtra("ID",0);
+            ID=intent.getStringExtra("ID");
             looping= intent.getBooleanExtra("looping",true);
             new AsyncCaller().execute();
             return START_STICKY;
@@ -92,7 +93,8 @@ public class SoundService extends Service {
             myMediaPlayer.reset();
             //Add the new media to be read
             try {
-                afd = context.getResources().openRawResourceFd(ID);
+                AssetManager assets = getAssets();
+                afd = getAssets().openFd("audio/"+ID+".mp3");
                 if (afd == null) {Log.i(TAG,"afd null");}
                 myMediaPlayer.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
                 afd.close();

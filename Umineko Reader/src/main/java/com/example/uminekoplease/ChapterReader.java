@@ -1,5 +1,6 @@
 package com.example.uminekoplease;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,7 +41,7 @@ public class ChapterReader extends AppCompatActivity {
 
         //Initialize other Data
         ArrayList<Integer> pageMusicList = new ArrayList<Integer>();
-        ArrayList<Integer> musicToPageList = new ArrayList<>();
+        ArrayList<String> musicToPageList = new ArrayList<>();
         String PrevChapter="";
         String NextChapter="";
         String VolumeName  = getIntent().getStringExtra("Volume");
@@ -78,11 +79,10 @@ public class ChapterReader extends AppCompatActivity {
                 {
                    String[] values =myString.split(" ");
                    pageMusicList.add(Integer.parseInt(values[0]));
-                   if(values[1].equals("1") || values[1].equals("2")){musicToPageList.add(Integer.parseInt(values[1]));}
+                   if(values[1].equals("1") || values[1].equals("2")){musicToPageList.add(values[1]);}
                    else
                    {
-                       int soundId = getResources().getIdentifier(values[1], "raw", this.getPackageName());
-                       musicToPageList.add(soundId);
+                       musicToPageList.add(values[1]);
                        Log.i("value1 ",String.valueOf(Integer.parseInt(values[0])));
                        Log.i("value2 ",values[1]);
                    }
@@ -175,7 +175,7 @@ public class ChapterReader extends AppCompatActivity {
             }
         });
     }
-    private void listener(ArrayList<Integer> temp,ArrayList<Integer> ID) {
+    private void listener(ArrayList<Integer> temp,ArrayList<String> ID) {
         //Play music depending on the page
         //Check the page we're at
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
@@ -194,7 +194,7 @@ public class ChapterReader extends AppCompatActivity {
                         //We get the ID
                         //int ID = getIntent().getIntegerArrayListExtra("musicName").get(i);
                         //ID = 1 means next chapter ID = 2 means prev chapter ID=3 means stop music
-                        if (ID.get(i)==1) {
+                        if (ID.get(i)== "1") {
                                 stopService(music);
                                 String[] ChapterName = getIntent().getStringExtra("ChapterName").split("0");
                                 if(ChapterName.length==1){ChapterName=getIntent().getStringExtra("ChapterName").split("r ");ChapterName[0]=ChapterName[0]+"r ";}
@@ -209,7 +209,7 @@ public class ChapterReader extends AppCompatActivity {
                                         .putExtra("Volume",getIntent().getStringExtra("Volume")).putExtra("ChapterName",ChapterNameFin);
                                 startActivity(intent);
                                 finish();
-                        } else if (ID.get(i)==2) {
+                        } else if (ID.get(i)== "2") {
                                 stopService(music);
                                 String[] ChapterName = getIntent().getStringExtra("ChapterName").split("0");
                                 if(ChapterName.length==1){ChapterName=getIntent().getStringExtra("ChapterName").split("r ");ChapterName[0]=ChapterName[0]+"r ";}
@@ -235,16 +235,16 @@ public class ChapterReader extends AppCompatActivity {
             }
         });
     }
-    private void setMusic(Intent music,int ID)
+    private void setMusic(Intent music, String ID)
     {
         //If my music is not the same I'm playing
-        if(music.getIntExtra("ID",0)!=ID)
+        if(music.getStringExtra("ID")!=ID)
         {
             //Stop Service, load another music then Start Service Again
             //stopService(music);
             music.removeExtra("ID");
             music.putExtra("ID",ID);
-            if(ID == R.raw.stab || ID == R.raw.slaphit)
+            if (ID == "stab" || ID == "slaphit")
             {
                 music.putExtra("looping",false);
             }
