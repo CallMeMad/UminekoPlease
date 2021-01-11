@@ -1,11 +1,9 @@
 package com.example.uminekoplease;
 
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,187 +18,124 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.uminekoplease.json.EpisodeJson;
 import com.example.uminekoplease.json.JSONResourceReader;
+import com.example.uminekoplease.json.PageJson;
 import com.google.android.material.tabs.TabLayout;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
 public class ChapterReader extends AppCompatActivity {
 
     //Initialize variable
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private int pageNumber;
-    private String IDName;
+    private String Chapter;
     private Intent music;
+    private Intent se1;
+    private Intent se2;
+    private Intent voice;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Initialize other Data
-        ArrayList<Integer> pageMusicList = new ArrayList<Integer>();
-        ArrayList<String> musicToPageList = new ArrayList<>();
-        String PrevChapter="";
-        String NextChapter="";
-        String VolumeName  = getIntent().getStringExtra("Volume");
-        String ChapterName = getIntent().getStringExtra("ChapterName");
-        String Test = VolumeName + " " + ChapterName;
+        //Initialize my Chapter
+        ArrayList<PageJson> myChapter = new ArrayList<PageJson>();
+        String path ="img/ep-"+getIntent().getStringExtra("ep")+"/vol-"+getIntent().getStringExtra("Volume")+"/ch-"+getIntent().getStringExtra("ChapterName")+"/";
+        String ChapterName = "Chapter "+getIntent().getStringExtra("ChapterName");
+        String VolumeName = "Volume "+getIntent().getStringExtra("ChapterName");
+        Chapter=getIntent().getStringExtra("ChapterName");
         String Cover1="";
         String Cover2="";
 
-        JSONResourceReader jsonReader = new JSONResourceReader(getResources(), R.raw.ep1);
+        //Get the .json
+        String test = "ep"+getIntent().getStringExtra("ep");
+        Log.i("TEST",test);
+        JSONResourceReader jsonReader = new JSONResourceReader(getResources(), getResources().getIdentifier("ep"+getIntent().getStringExtra("ep"),"raw",getPackageName()));
         EpisodeJson jsonObj = jsonReader.constructUsingGson(EpisodeJson.class);
-
-        //Read the File and get the data
-        InputStream input = getResources().openRawResource(R.raw.data);
-        try{
-            if(input !=null)
-            {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                String myString;
-                int counter=0;
-                Log.i("Test1 ",Test);
-                while((!((myString=reader.readLine()).equals(Test))))
-                {
-                    Log.i("Test2 ",myString);
-                }
-                IDName= reader.readLine();
-                Log.i("IDName ",IDName);
-                pageNumber= Integer.parseInt(reader.readLine());
-                Log.i("pageNumber ", String.valueOf(pageNumber));
-                Cover1 = reader.readLine();
-                Log.i("Cover1 ", String.valueOf(Cover1));
-                Cover2 = reader.readLine();
-                Log.i("Cover2 ", String.valueOf(Cover2));
-                PrevChapter=reader.readLine().substring(1);
-                Log.i("Prev ",PrevChapter);
-                NextChapter=reader.readLine().substring(1);
-                Log.i("Next ",NextChapter);
-                while(!(myString = reader.readLine()).equals("/"))
-                {
-                   String[] values =myString.split(" ");
-                   pageMusicList.add(Integer.parseInt(values[0]));
-                   if(values[1].equals("1") || values[1].equals("2")){musicToPageList.add(values[1]);}
-                   else
-                   {
-                       musicToPageList.add(values[1]);
-                       Log.i("value1 ",String.valueOf(Integer.parseInt(values[0])));
-                       Log.i("value2 ",values[1]);
-                   }
-
-                    counter++;
-                }
-                reader.close();
-                input.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        //Read the file from a jsonObject
-        }
-
+        String title= jsonObj.getTitle();
+        String art=jsonObj.getArt();
+        String Volume = jsonObj.getChapterVolume(Chapter);
+        /*HashMap<String, ArrayList<PageJson>> chapter=jsonObj.getChapter();*/
+        myChapter=jsonObj.getPages("1");
+        Log.i("title",title);
+        Log.i("Art",art);
+        Log.i("Volume", String.valueOf(Volume));
+        Log.i("chapter",String.valueOf(myChapter.size()));
         setContentView(R.layout.umineko_episode01_chapter01);
+
         //Change the appbar Text
         TextView textView = (TextView) findViewById(R.id.Titre);
-        String chapterText = getIntent().getStringExtra("ChapterName");
-        textView.setText(chapterText);
+        textView.setText(ChapterName);
 
         //assign Variable
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
         boolean startingPoint = getIntent().getBooleanExtra("start", true);
+
+        //Set Service
         music= new Intent(this,SoundService.class);
+        se2 = new Intent(this,SoundService.class);
+        se1 = new Intent(this,SoundService.class);
+        voice= new Intent(this,SoundService.class);
 
-        //Initialize the List
-        ArrayList<String> mArrayList = new ArrayList<>();
-        //Initialize the list
-        ArrayList<String> mArrayPage = new ArrayList<>();
-
-        //Add Previous fragment only if there is a previous fragment
-        if (!PrevChapter.equals("false")) {
-            mArrayPage.add("next");
-            mArrayList.add("Previous Chapter");
-        }
-        //Start Page
-        mArrayPage.add(Cover1);
-        mArrayList.add("StartPage");
         //add the page and the ID in array list
-        for (int i = 1; i <= pageNumber; i++) {
-//          Create the string to find the page
-            String page;
-            if (i < 10) {
-                page = "0" + (i);
-            } else {
-                page = "" + (i);
-            }
-            mArrayList.add(page + "/" + pageNumber);
-            //int drawableId = getResources().getIdentifier(IDName + page, "drawable", getPackageName());
-            String drawablePath = IDName + page;
-            mArrayPage.add(drawablePath);
+        myChapter.add(new PageJson("cover2","",null,false));
+        myChapter.add(0,new PageJson("cover","",null,false));
+
+        //Choose if we start at the end or not
+        int start =0;
+        //If there is a next
+        if(jsonObj.getNextChapter(Chapter)!=null)
+        {
+            myChapter.add(new PageJson("next","",null,false));
+            //Set the starting point
+            if (startingPoint) {
+                start=myChapter.size()-1;
+                tabLayout.selectTab(tabLayout.getTabAt(start));}
+            else{
+                start=1;
+                tabLayout.selectTab(tabLayout.getTabAt(start));}
         }
-        mArrayPage.add(Cover2);
-        mArrayList.add("EndPage");
-        //Next Page
-        if (!NextChapter.equals("false")) {
-            mArrayPage.add("next");
-            mArrayList.add("Next Chapter");
+        else
+        {
+            if(startingPoint){
+                start=myChapter.size()-2;
+                tabLayout.selectTab(tabLayout.getTabAt(start));}
+            else{tabLayout.selectTab(tabLayout.getTabAt(0));}
+        }
+        //If there is a prev
+        if(jsonObj.getPrevChapter(Chapter)!=null)
+        {
+            myChapter.add(0,new PageJson("prev","",null,false));
         }
 
         //prepare view pager
-        prepareViewPager(viewPager, mArrayList, mArrayPage);
+        prepareViewPager(viewPager, myChapter,path);
 
         //setup with view pager
         tabLayout.setupWithViewPager(viewPager);
 
-        //Choose if we start at the end or not
-
-        //If there is a next
-        if(!NextChapter.equals("false"))
-        {
-            if (startingPoint) { tabLayout.selectTab(tabLayout.getTabAt(pageNumber+2));}
-            else{tabLayout.selectTab(tabLayout.getTabAt(1));}
-        }
-        else
-        {
-            if(startingPoint){tabLayout.selectTab(tabLayout.getTabAt(pageNumber+1));}
-            else{tabLayout.selectTab(tabLayout.getTabAt(0));}
-        }
-
-        listener(pageMusicList,musicToPageList);
+        listener(myChapter,start);
         //Return Button
-        ImageView imageView = (ImageView) findViewById(R.id.retour);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopService(music);
-                finish();
-            }
+        ImageView imageView = findViewById(R.id.retour);
+        imageView.setOnClickListener(v -> {
+            stopService(music);
+            finish();
         });
     }
-    private void listener(ArrayList<Integer> temp,ArrayList<String> ID) {
+    private void listener(ArrayList<PageJson> myPages,int startingpoint) {
         //Play music depending on the page
         //Check the page we're at
+
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            PageJson current = myPages.get(startingpoint);
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 int numTab = tab.getPosition();
-                //At the end
-                //For all case where I want to play Music
-                for (int i = 0; i < temp.size(); i++) {
-                    //Temp is my Array of case
-                    //ArrayList<Integer> temp = getIntent().getIntegerArrayListExtra("ArrayCase");
-                    //If the case is good
-                    if (numTab == temp.get(i))
-                    {
-                        //We get the ID
-                        //int ID = getIntent().getIntegerArrayListExtra("musicName").get(i);
-                        //ID = 1 means next chapter ID = 2 means prev chapter ID=3 means stop music
-                        if (ID.get(i)== "1") {
+                        if (myPages.get(numTab).getPagePath().equals("next")) {
                                 stopService(music);
                                 String[] ChapterName = getIntent().getStringExtra("ChapterName").split("0");
                                 if(ChapterName.length==1){ChapterName=getIntent().getStringExtra("ChapterName").split("r ");ChapterName[0]=ChapterName[0]+"r ";}
@@ -215,7 +150,7 @@ public class ChapterReader extends AppCompatActivity {
                                         .putExtra("Volume",getIntent().getStringExtra("Volume")).putExtra("ChapterName",ChapterNameFin);
                                 startActivity(intent);
                                 finish();
-                        } else if (ID.get(i)== "2") {
+                        } else if (myPages.get(numTab).getPagePath().equals("prev")) {
                                 stopService(music);
                                 String[] ChapterName = getIntent().getStringExtra("ChapterName").split("0");
                                 if(ChapterName.length==1){ChapterName=getIntent().getStringExtra("ChapterName").split("r ");ChapterName[0]=ChapterName[0]+"r ";}
@@ -231,20 +166,19 @@ public class ChapterReader extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
                             }
-                         else
-                         {
-                           Log.i("MUSIC SET NUMBER", String.valueOf(i));
-                           setMusic(music, ID.get(i));
-                         }
-                    }
-                }
+                         else {
+                            if (!(current.getBgmPath().equals(myPages.get(numTab).getBgmPath()))) {
+                                //setMusic(myPages.get(numTab).getBgmPath());
+                            }
+                            current = myPages.get(numTab);
+                        }
             }
         });
     }
-    private void setMusic(Intent music, String ID)
+    private void setMusic(String ID)
     {
         //If my music is not the same I'm playing
-        if(music.getStringExtra("ID")!=ID)
+        if(!music.getStringExtra("ID").equals(ID))
         {
             //Stop Service, load another music then Start Service Again
             //stopService(music);
@@ -260,27 +194,28 @@ public class ChapterReader extends AppCompatActivity {
             }
             Log.i("MUSIC SET ", String.valueOf(ID));
             startService(music);
-            //Log.d("MUSIC SET :", String.valueOf(ID));
         }
     }
-    private void prepareViewPager(ViewPager viewPager, ArrayList<String> arrayList,ArrayList<String> mArrayPage) {
+    private void prepareViewPager(ViewPager viewPager,ArrayList<PageJson> myPages,String path) {
         //Initialize main adapter
         ChapterReader.MainAdapter adapter=new ChapterReader.MainAdapter(getSupportFragmentManager());
         //Initialize main Fragment
         ChapterFragment fragment = new ChapterFragment();
         //Use for loop
-        for(int i=mArrayPage.size()-1; i>=0;i--)
+        for(int i=myPages.size()-1; i>=0;i--)
         {
             //Initialize bundle
             Bundle bundle = new Bundle();
+            String goodPath = path+myPages.get(i).getPagePath()+".jpg";
             //Put string
-            bundle.putString("title",arrayList.get(i));
-            //put int
-            bundle.putString("page",mArrayPage.get(i));
+            bundle.putString("title",myPages.get(i).getPagePath());
+            //put String Path
+            bundle.putString("page",goodPath);
             //set Argument
             fragment.setArguments(bundle);
             //add fragment
-            adapter.addFragment(fragment,arrayList.get(i),mArrayPage.get(i));
+
+            adapter.addFragment(fragment,myPages.get(i).getPagePath(),goodPath);
             //Define new Fragment
             fragment = new ChapterFragment();
         }

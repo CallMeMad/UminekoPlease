@@ -1,5 +1,7 @@
 package com.example.uminekoplease.json;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,4 +10,62 @@ public class EpisodeJson {
     String art;
     HashMap<String, ArrayList<Integer>> volumes;
     HashMap<String, ArrayList<PageJson>> chapters;
+
+    EpisodeJson(String title,String art,  HashMap<String, ArrayList<Integer>> volumes, HashMap<String, ArrayList<PageJson>> chapter)
+    {
+        this.title=title;
+        this.art=art;
+        this.volumes=volumes;
+        this.chapters=chapter;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+    public String getArt() {
+        return art;
+    }
+    public String getPrevChapter(String chapter)
+    {
+        if(chapter.equals("1")){
+            return null;
+        }
+        else{
+            int index =Integer.parseInt(chapter);
+            index--;
+            return String.valueOf(index);
+        }
+    }
+    public String getNextChapter(String chapter)
+    {
+        if(chapter.equals(String.valueOf(chapters.size()))){
+            return null;
+        }
+        else{
+            int index =Integer.parseInt(chapter);
+            index++;
+            return String.valueOf(index);
+        }
+    }
+    public ArrayList<PageJson> getPages(String chapter) {
+        return this.chapters.get(chapter);
+    }
+    public String getChapterVolume(String Chapter)
+    {
+        String Volume="";
+        Log.i("SIZE", String.valueOf(volumes.size()));
+            for(int j=0;j<volumes.size();j++)
+            {
+                for(int i=0;i<volumes.get(String.valueOf(j+1)).size();i++)
+                {
+                    if(Chapter.equals(String.valueOf(volumes.get(String.valueOf(j+1)).get(i))))
+                    {
+                        return String.valueOf(volumes.get(String.valueOf(j+1)).get(i));
+                    }
+                }
+            }
+        return Volume;
+    }
+
+
 }

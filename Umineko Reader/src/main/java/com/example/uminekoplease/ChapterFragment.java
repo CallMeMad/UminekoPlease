@@ -1,6 +1,5 @@
 package com.example.uminekoplease;
 
-import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -29,7 +28,6 @@ public class ChapterFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     public ChapterFragment() {
     }
 
@@ -39,6 +37,7 @@ public class ChapterFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
+     *
      * @return A new instance of fragment ChapterFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -72,7 +71,7 @@ public class ChapterFragment extends Fragment {
 
         InputStream ims = null;
         try {
-            ims = getActivity().getAssets().open("img/"+getArguments().getString("page")+".jpg");
+            ims = getActivity().getAssets().open(getArguments().getString("page"));
             Drawable d = Drawable.createFromStream(ims, null);
             imageView.setImageDrawable(d);
         } catch (IOException e) {

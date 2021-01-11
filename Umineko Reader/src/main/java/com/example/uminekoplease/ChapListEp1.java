@@ -35,8 +35,8 @@ public class ChapListEp1 extends AppCompatActivity {
 
         if(getIntent().getStringExtra("String").equals("Episode 1"))
         {
-            chapterList.add(new Chapter("Chapter 01","02/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
-                    .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 01").putExtra("start",true)));
+            chapterList.add(new Chapter("Chapter 01","02/12/2020",new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep","1")
+                    .putExtra("Volume","1").putExtra("ChapterName","1").putExtra("start",true)));
             chapterList.add(new Chapter("Chapter 02","09/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
                     .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 02").putExtra("start",true)));
             chapterList.add(new Chapter("Chapter 03","10/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
@@ -86,7 +86,7 @@ public class ChapListEp1 extends AppCompatActivity {
         {
             //Add our chapter to the LIst
             this.imageView=(ImageView)findViewById(R.id.cover);
-            imageView.setImageResource(R.drawable.umineko_v01_ch04_01);
+            imageView.setImageResource(R.drawable.cover1);
             this.textToolBar=(TextView)findViewById(R.id.underText);
             textToolBar.setText("Turn of The Golden Witch");
             chapterList.add(new Chapter("Chapter 01","06/12/2020",new Intent(getApplicationContext(), ChapterReader.class)

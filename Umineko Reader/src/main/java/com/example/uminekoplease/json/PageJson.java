@@ -2,9 +2,34 @@ package com.example.uminekoplease.json;
 
 import java.util.ArrayList;
 
-class PageJson {
+public class PageJson {
     String page;
     String bgm;
     ArrayList<String> se;
     Boolean voice;
+
+    public PageJson( String page,  String bgm,  ArrayList<String> se,  Boolean voice)
+    {
+        this.page=page;
+        this.bgm=bgm;
+        this.se=se;
+        this.voice=voice;
+    }
+
+    public String getBgmPath() {
+        return bgm;
+    }
+
+    public String getPagePath() {
+        return page;
+    }
+
+    public ArrayList<String> getSePath() {
+        return se;
+    }
+
+    public Boolean getVoicePath() {
+        return voice;
+    }
 }
+
