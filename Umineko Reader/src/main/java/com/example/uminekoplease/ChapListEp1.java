@@ -37,8 +37,8 @@ public class ChapListEp1 extends AppCompatActivity {
         {
             chapterList.add(new Chapter("Chapter 01","02/12/2020",new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep","1")
                     .putExtra("Volume","1").putExtra("ChapterName","1").putExtra("start",true)));
-            chapterList.add(new Chapter("Chapter 02","09/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
-                    .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 02").putExtra("start",true)));
+            chapterList.add(new Chapter("Chapter 02","09/12/2020",new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep","1")
+                    .putExtra("Volume","1").putExtra("ChapterName","2").putExtra("start",true)));
             chapterList.add(new Chapter("Chapter 03","10/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
                     .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 03").putExtra("start",true)));
             chapterList.add(new Chapter("Chapter 04","10/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
