@@ -28,6 +28,9 @@ public class SoundService extends Service {
     private static final String TAG = "tag";
     private Context context;
     private boolean bgm;
+    private boolean se_1;
+    private boolean se_2;
+    private boolean voices;
     private String[] ID;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -66,6 +69,9 @@ public class SoundService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
             ID=new String[]{intent.getStringExtra("ID"),intent.getStringExtra("se1"),intent.getStringExtra("se2"),intent.getStringExtra("voice")};
             bgm=intent.getBooleanExtra("bgm",true);
+            se_1=intent.getBooleanExtra("se_1",true);
+            se_2=intent.getBooleanExtra("se_2",true);
+            voices=intent.getBooleanExtra("voices",true);
             Log.i("DATA",ID[0]+"   "+ID[3]);
             new AsyncCaller().execute();
             return START_STICKY;
@@ -99,7 +105,7 @@ public class SoundService extends Service {
         @Override
         protected Void doInBackground(Void... locs) {
             //If a media is playing
-            if(bgm==true) {
+            if(bgm) {
                 if (myMediaPlayer.isPlaying()) {
                     do {
                         myMediaPlayer.setVolume(volume[0], volume[0]);
@@ -107,108 +113,115 @@ public class SoundService extends Service {
                     } while (volume[0] > 0);
                     myMediaPlayer.stop();
                 }
-                myMediaPlayer.reset();
             }
             //if a sound effect is playing
-            if(se1.isPlaying())
-            {
-                do {
-                    se1.setVolume(volume[1],volume[1]);
-                    volume[1]-=0.002f;
-                }while(volume[1]>0);
-                se1.stop();
+            if(se_1) {
+                if (se1.isPlaying()) {
+                    do {
+                        se1.setVolume(volume[1], volume[1]);
+                        volume[1] -= 0.002f;
+                    } while (volume[1] > 0);
+                    se1.stop();
+                }
             }
-            se1.reset();
-            if(se2.isPlaying())
-            {
-                do {
-                    se2.setVolume(volume[2],volume[2]);
-                    volume[2]-=0.002f;
-                }while(volume[2]>0);
-                se2.stop();
+            if(se_2) {
+                if (se2.isPlaying()) {
+                    do {
+                        se2.setVolume(volume[2], volume[2]);
+                        volume[2] -= 0.002f;
+                    } while (volume[2] > 0);
+                    se2.stop();
+                }
             }
-            se2.reset();
-            if(voice.isPlaying())
-            {
-                do {
-                    voice.setVolume(volume[3],volume[3]);
-                    volume[3]-=0.002f;
-                }while(volume[3]>0);
-                voice.stop();
-            }
-            voice.reset();
+                if (voice.isPlaying()) {
+                    do {
+                        voice.setVolume(volume[3], volume[3]);
+                        volume[3] -= 0.02f;
+                    } while (volume[3] > 0);
+                    voice.stop();
+                }
             //Add the new media to be read
-            try {
-                AssetFileDescriptor afd = getAssets().openFd(ID[0]);
-                if (afd == null) {Log.i(TAG,"afd null");}
-                myMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                afd.close();
-                myMediaPlayer.prepareAsync(); // prepare async to not block main thread
-            } catch (IOException e) {
-                Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-            //mp3 will be started after completion of preparing...
-            myMediaPlayer.setOnPreparedListener(player -> {
-                new FadeIn().execute();
-            });
-            //Add the new media to be read
-            if(ID[1]!=null) {
+            if(bgm) {
+                myMediaPlayer.reset();
                 try {
-                    AssetFileDescriptor afd = getAssets().openFd(ID[1]);
+                    AssetFileDescriptor afd = getAssets().openFd(ID[0]);
                     if (afd == null) {
                         Log.i(TAG, "afd null");
                     }
-                    se1.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    myMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                     afd.close();
-                    se1.prepareAsync(); // prepare async to not block main thread
+                    myMediaPlayer.prepareAsync(); // prepare async to not block main thread
                 } catch (IOException e) {
                     Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
                 //mp3 will be started after completion of preparing...
-                se1.setOnPreparedListener(player -> {
+                myMediaPlayer.setOnPreparedListener(player -> {
                     new FadeIn().execute();
                 });
             }
             //Add the new media to be read
-            if(ID[2]!=null) {
-                try {
-                    AssetFileDescriptor afd = getAssets().openFd(ID[3]);
-                    if (afd == null) {
-                        Log.i(TAG, "afd null");
+                if (ID[1] != null) {
+                    se1.reset();
+                    try {
+                        AssetFileDescriptor afd = getAssets().openFd(ID[1]);
+                        if (afd == null) {
+                            Log.i(TAG, "afd null");
+                        }
+                        se1.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                        afd.close();
+                        se1.prepareAsync(); // prepare async to not block main thread
+                    } catch (IOException e) {
+                        Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
                     }
-                    se2.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                    afd.close();
-                    se2.prepareAsync(); // prepare async to not block main thread
-                } catch (IOException e) {
-                    Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-                //mp3 will be started after completion of preparing...
-                se2.setOnPreparedListener(player -> {
-                    new FadeIn().execute();
-                });
+                    //mp3 will be started after completion of preparing...
+                    se1.setOnPreparedListener(player -> {
+                        new FadeIn().execute();
+                    });
             }
             //Add the new media to be read
-            if(ID[3]!=null)
-            {
-                try {
-                    AssetFileDescriptor afd = getAssets().openFd(ID[3]);
-                    if (afd == null) {
-                        Log.i(TAG, "afd null");
+
+                if (ID[2] != null) {
+                    se2.reset();
+                    try {
+                        AssetFileDescriptor afd = getAssets().openFd(ID[3]);
+                        if (afd == null) {
+                            Log.i(TAG, "afd null");
+                        }
+                        se2.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                        afd.close();
+                        se2.prepareAsync(); // prepare async to not block main thread
+                    } catch (IOException e) {
+                        Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
                     }
-                    voice.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                    afd.close();
-                    voice.prepareAsync(); // prepare async to not block main thread
-                } catch (IOException e) {
-                    Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                    //mp3 will be started after completion of preparing...
+                    se2.setOnPreparedListener(player -> {
+                        new FadeIn().execute();
+                    });
+            }
+            //Add the new media to be read
+            if(voices) {
+                if (ID[3] != null) {
+                    voice.reset();
+                    try {
+                        AssetFileDescriptor afd = getAssets().openFd(ID[3]);
+                        if (afd == null) {
+                            Log.i(TAG, "afd null");
+                        }
+                        voice.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                        afd.close();
+                        voice.prepareAsync(); // prepare async to not block main thread
+                    } catch (IOException e) {
+                        Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                    //mp3 will be started after completion of preparing...
+                    voice.setOnPreparedListener(player -> {
+                        new FadeIn().execute();
+                    });
                 }
-                //mp3 will be started after completion of preparing...
-                voice.setOnPreparedListener(player -> {
-                    new FadeIn().execute();
-                });
             }
             return null;
         }

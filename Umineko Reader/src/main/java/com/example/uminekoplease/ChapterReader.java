@@ -160,7 +160,12 @@ public class ChapterReader extends AppCompatActivity {
                             }
                          else {
                              //If the music is not the same as the one before
-                            setAll(myPages.get(numTab).getBgmPath(),myPages.get(numTab).getSePath(),myPages.get(numTab).getPagePath());
+
+                            String voicepath;
+                            if(myPages.get(numTab).getVoicePath()){voicepath=myPages.get(numTab).getPagePath();}
+                            else{voicepath=null;}
+                            Log.i("Voice", String.valueOf(myPages.get(numTab).getVoicePath()));
+                            setAll(myPages.get(numTab).getBgmPath(),myPages.get(numTab).getSePath(),voicepath);
                         }
                 current = myPages.get(numTab);
             }
@@ -188,11 +193,13 @@ public class ChapterReader extends AppCompatActivity {
                 if (!music.getStringExtra("ID").equals(ID)) {
                     music.removeExtra("ID");
                     music.putExtra("ID", ID);
+                    music.removeExtra("bgm");
                     music.putExtra("bgm",true);
                     Log.i("MUSIC START",ID);
                 }
                 else
                 {
+                    music.removeExtra("se_1");
                     music.putExtra("bgm",false);
                 }
             }
@@ -204,13 +211,19 @@ public class ChapterReader extends AppCompatActivity {
             ID.set(i,"audio/se/umilse_" + ID.get(i) + ".ogg");
              if(i==0)
             {
+                //If the prev is null
                 if(music.getStringExtra("se1")==null){
+                    //If the new is not
                     if(ID.get(i)!=null)
                     {
+                        //We set variable
                         music.removeExtra("se1");
                         music.putExtra("se1",ID.get(i));
+                        music.removeExtra("se_1");
+                        music.putExtra("se_1",false);
                     }
                 }
+                //if both aren't null
                 else if(ID.get(i)!=null)
                 {
                     //Stop Service, load another music then Start Service Again
@@ -218,6 +231,8 @@ public class ChapterReader extends AppCompatActivity {
                     {
                         music.removeExtra("se1");
                         music.putExtra("se1",ID);
+                        music.removeExtra("se_1");
+                        music.putExtra("se_1",true);
                     }
                 }
             }
@@ -244,11 +259,17 @@ public class ChapterReader extends AppCompatActivity {
     }
     private void setVoice(String ID)
     {
-        ID = "voice/ep-"+Episode+"/ch-"+Chapter+"/"+ID+".ogg";
-        //Stop Service, load another music then Start Service Again
-        music.removeExtra("voice");
-        music.putExtra("voice",ID);
-        Log.i("VOICE START",ID);
+        if(ID!=null) {
+            ID = "voice/ep-" + Episode + "/ch-" + Chapter + "/" + ID + ".ogg";
+            //Stop Service, load another music then Start Service Again
+            music.removeExtra("voice");
+            music.putExtra("voice", ID);
+        }
+        else
+        {
+            music.putExtra("voices",false);
+        }
+
     }
     private void prepareViewPager(ViewPager viewPager,ArrayList<PageJson> myPages,String path) {
         //Initialize main adapter
