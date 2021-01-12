@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
@@ -21,13 +20,15 @@ import java.io.IOException;
 
 public class SoundService extends Service {
 
-    private  MediaPlayer myMediaPlayer;
-    float volume;
+    private MediaPlayer myMediaPlayer;
+    private MediaPlayer se1;
+    private MediaPlayer se2;
+    private MediaPlayer voice;
+    private float[] volume;
     private static final String TAG = "tag";
     private Context context;
-    private AssetFileDescriptor afd;
-    private boolean looping;
-    private String ID;
+    private boolean bgm;
+    private String[] ID;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -39,20 +40,36 @@ public class SoundService extends Service {
                         .Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         .build());
+        se1 = new MediaPlayer();
+        se1.setAudioAttributes(
+                new AudioAttributes
+                        .Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build());
+        se2 = new MediaPlayer();
+        se2.setAudioAttributes(
+                new AudioAttributes
+                        .Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build());
+        voice = new MediaPlayer();
+        voice.setAudioAttributes(
+                new AudioAttributes
+                        .Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build());
         context = getApplicationContext();
-        this.volume=1;
+        volume= new float[]{1, 1, 1, 1};
     }
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-            ID=intent.getStringExtra("ID");
-            looping= intent.getBooleanExtra("looping",true);
+            ID=new String[]{intent.getStringExtra("ID"),intent.getStringExtra("se1"),intent.getStringExtra("se2"),intent.getStringExtra("voice")};
+            bgm=intent.getBooleanExtra("bgm",true);
+            Log.i("DATA",ID[0]+"   "+ID[3]);
             new AsyncCaller().execute();
             return START_STICKY;
     }
-
-
     @Override
     public void onDestroy() {
         Log.i("I AM HERE", "HELLO");
@@ -82,31 +99,117 @@ public class SoundService extends Service {
         @Override
         protected Void doInBackground(Void... locs) {
             //If a media is playing
-            if(myMediaPlayer.isPlaying())
+            if(bgm==true) {
+                if (myMediaPlayer.isPlaying()) {
+                    do {
+                        myMediaPlayer.setVolume(volume[0], volume[0]);
+                        volume[0] -= 0.002f;
+                    } while (volume[0] > 0);
+                    myMediaPlayer.stop();
+                }
+                myMediaPlayer.reset();
+            }
+            //if a sound effect is playing
+            if(se1.isPlaying())
             {
                 do {
-                    myMediaPlayer.setVolume(volume,volume);
-                    volume-=0.002f;
-                }while(volume>0);
-                myMediaPlayer.stop();
+                    se1.setVolume(volume[1],volume[1]);
+                    volume[1]-=0.002f;
+                }while(volume[1]>0);
+                se1.stop();
             }
-            myMediaPlayer.reset();
+            se1.reset();
+            if(se2.isPlaying())
+            {
+                do {
+                    se2.setVolume(volume[2],volume[2]);
+                    volume[2]-=0.002f;
+                }while(volume[2]>0);
+                se2.stop();
+            }
+            se2.reset();
+            if(voice.isPlaying())
+            {
+                do {
+                    voice.setVolume(volume[3],volume[3]);
+                    volume[3]-=0.002f;
+                }while(volume[3]>0);
+                voice.stop();
+            }
+            voice.reset();
             //Add the new media to be read
             try {
-                AssetManager assets = getAssets();
-                afd = getAssets().openFd("audio/"+ID+".mp3");
+                AssetFileDescriptor afd = getAssets().openFd(ID[0]);
                 if (afd == null) {Log.i(TAG,"afd null");}
-                myMediaPlayer.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+                myMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                 afd.close();
                 myMediaPlayer.prepareAsync(); // prepare async to not block main thread
             } catch (IOException e) {
-                Toast.makeText(context, "mp3 not found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
             //mp3 will be started after completion of preparing...
             myMediaPlayer.setOnPreparedListener(player -> {
                 new FadeIn().execute();
             });
+            //Add the new media to be read
+            if(ID[1]!=null) {
+                try {
+                    AssetFileDescriptor afd = getAssets().openFd(ID[1]);
+                    if (afd == null) {
+                        Log.i(TAG, "afd null");
+                    }
+                    se1.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    afd.close();
+                    se1.prepareAsync(); // prepare async to not block main thread
+                } catch (IOException e) {
+                    Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+                //mp3 will be started after completion of preparing...
+                se1.setOnPreparedListener(player -> {
+                    new FadeIn().execute();
+                });
+            }
+            //Add the new media to be read
+            if(ID[2]!=null) {
+                try {
+                    AssetFileDescriptor afd = getAssets().openFd(ID[3]);
+                    if (afd == null) {
+                        Log.i(TAG, "afd null");
+                    }
+                    se2.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    afd.close();
+                    se2.prepareAsync(); // prepare async to not block main thread
+                } catch (IOException e) {
+                    Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+                //mp3 will be started after completion of preparing...
+                se2.setOnPreparedListener(player -> {
+                    new FadeIn().execute();
+                });
+            }
+            //Add the new media to be read
+            if(ID[3]!=null)
+            {
+                try {
+                    AssetFileDescriptor afd = getAssets().openFd(ID[3]);
+                    if (afd == null) {
+                        Log.i(TAG, "afd null");
+                    }
+                    voice.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    afd.close();
+                    voice.prepareAsync(); // prepare async to not block main thread
+                } catch (IOException e) {
+                    Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+                //mp3 will be started after completion of preparing...
+                voice.setOnPreparedListener(player -> {
+                    new FadeIn().execute();
+                });
+            }
             return null;
         }
 
@@ -127,16 +230,30 @@ public class SoundService extends Service {
             //Fade In
 
             myMediaPlayer.setVolume(0, 0);
-            myMediaPlayer.setLooping(looping);
-            volume = 0;
+            myMediaPlayer.setLooping(true);
+            se1.setVolume(0, 0);
+            se1.setLooping(true);
+            se2.setVolume(0, 0);
+            se2.setLooping(true);
+            voice.setVolume(0, 0);
+            voice.setLooping(false);
+            volume[0] = 0; volume[1] = 0;volume[2] = 0;volume[3] = 0;
             myMediaPlayer.start();
-            while (volume < 1) {
-                volume += 0.01f;
-
-                myMediaPlayer.setVolume(volume, volume);
+            se1.start();
+            se2.start();
+            voice.start();
+            while (volume[0] < 1) {
+                volume[0] += 0.01f; volume[1] += 0.01f; volume[2] += 0.01f;volume[3] += 0.01f;
+                myMediaPlayer.setVolume(volume[0], volume[0]);
+                se1.setVolume(volume[1], volume[1]);
+                se2.setVolume(volume[2], volume[2]);
+                voice.setVolume(volume[3], volume[3]);
             }
-            volume = 1;
-            myMediaPlayer.setVolume(volume, volume);
+            volume[0] = 1;volume[1] = 1; volume[2] = 1; volume[3] = 1;
+            myMediaPlayer.setVolume(volume[0], volume[0]);
+            se1.setVolume(volume[1], volume[1]);
+            se2.setVolume(volume[2], volume[2]);
+            voice.setVolume(volume[3], volume[3]);
             return null;
         }
     }

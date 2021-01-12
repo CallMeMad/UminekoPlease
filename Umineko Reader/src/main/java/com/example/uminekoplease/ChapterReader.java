@@ -34,10 +34,8 @@ public class ChapterReader extends AppCompatActivity {
     private String NextChapter;
     private String PrevChapter;
     private String Volume;
+    private String Episode;
     private Intent music;
-    private Intent se1;
-    private Intent se2;
-    private Intent voice;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -46,15 +44,13 @@ public class ChapterReader extends AppCompatActivity {
 
         //Initialize my Chapter
         ArrayList<PageJson> myChapter = new ArrayList<>();
-        String path ="img/ep-"+getIntent().getStringExtra("ep")+"/vol-"+getIntent().getStringExtra("Volume")+"/ch-"+getIntent().getStringExtra("ChapterName")+"/";
-        String ChapterName = "Chapter "+getIntent().getStringExtra("ChapterName");
         Volume =getIntent().getStringExtra("Volume");
         Chapter=getIntent().getStringExtra("ChapterName");
-
+        Episode =getIntent().getStringExtra("ep");
+        String path ="img/ep-"+ Episode +"/vol-"+Volume+"/ch-"+Chapter+"/";
+        String ChapterName = "Chapter "+Chapter;
         //Get the .json
-        String test = "ep"+getIntent().getStringExtra("ep");
-        Log.i("TEST",test);
-        JSONResourceReader jsonReader = new JSONResourceReader(getResources(), getResources().getIdentifier("ep"+getIntent().getStringExtra("ep"),"raw",getPackageName()));
+        JSONResourceReader jsonReader = new JSONResourceReader(getResources(), getResources().getIdentifier("ep"+ Episode,"raw",getPackageName()));
         EpisodeJson jsonObj = jsonReader.constructUsingGson(EpisodeJson.class);
         String title= jsonObj.getTitle();
         String art=jsonObj.getArt();
@@ -77,9 +73,6 @@ public class ChapterReader extends AppCompatActivity {
 
         //Set Service
         music= new Intent(this,SoundService.class);
-        se2 = new Intent(this,SoundService.class);
-        se1 = new Intent(this,SoundService.class);
-        voice= new Intent(this,SoundService.class);
 
         //add the page and the ID in array list
         myChapter.add(new PageJson("cover2","",null,false));
@@ -166,37 +159,97 @@ public class ChapterReader extends AppCompatActivity {
                                 finish();
                             }
                          else {
-                           /* if (!(current.getBgmPath().equals(myPages.get(numTab).getBgmPath()))) {
-                                //setMusic(myPages.get(numTab).getBgmPath());
-                            }*/
+                             //If the music is not the same as the one before
+                            setAll(myPages.get(numTab).getBgmPath(),myPages.get(numTab).getSePath(),myPages.get(numTab).getPagePath());
                         }
                 current = myPages.get(numTab);
             }
         });
     }
+    private void setAll(String ID,ArrayList<String>se,String voice)
+    {
+        setMusic(ID);
+        setSE(se);
+        setVoice(voice);
+        startService(music);
+    }
     private void setMusic(String ID)
     {
-        //If my music is not the same I'm playing
-        if(!music.getStringExtra("ID").equals(ID))
+            ID = "audio/bgm/umib_" + ID + ".ogg";
+            //if the previous music has no music
+            if (music.getStringExtra("ID") == null) {
+                music.removeExtra("ID");
+                music.putExtra("ID", ID);
+                Log.i("MUSICSET",ID);
+            }
+            //If the previous music has music
+            else {
+                //We compare the two music
+                if (!music.getStringExtra("ID").equals(ID)) {
+                    music.removeExtra("ID");
+                    music.putExtra("ID", ID);
+                    music.putExtra("bgm",true);
+                    Log.i("MUSIC START",ID);
+                }
+                else
+                {
+                    music.putExtra("bgm",false);
+                }
+            }
+    }
+    private void setSE(ArrayList<String>ID)
+    {
+        for(int i=0;i<ID.size();i++)
         {
-            //Stop Service, load another music then Start Service Again
-            //stopService(music);
-            music.removeExtra("ID");
-            music.putExtra("ID",ID);
-            if (ID == "stab" || ID == "slaphit")
+            ID.set(i,"audio/se/umilse_" + ID.get(i) + ".ogg");
+             if(i==0)
             {
-                music.putExtra("looping",false);
+                if(music.getStringExtra("se1")==null){
+                    if(ID.get(i)!=null)
+                    {
+                        music.removeExtra("se1");
+                        music.putExtra("se1",ID.get(i));
+                    }
+                }
+                else if(ID.get(i)!=null)
+                {
+                    //Stop Service, load another music then Start Service Again
+                    if(!music.getStringExtra("se1").equals(ID.get(i)))
+                    {
+                        music.removeExtra("se1");
+                        music.putExtra("se1",ID);
+                    }
+                }
             }
             else
             {
-                music.putExtra("looping",true);
+                if(music.getStringExtra("se2")==null){
+                    if(ID.get(i)!=null)
+                    {
+                        music.removeExtra("se2");
+                        music.putExtra("se2",ID.get(i));
+                    }
+                }
+                else if(ID.get(i)!=null)
+                {
+                    //Stop Service, load another music then Start Service Again
+                    if(!music.getStringExtra("se2").equals(ID.get(i)))
+                    {
+                        music.removeExtra("se2");
+                        music.putExtra("se2",ID);
+                    }
+                }
             }
-            Log.i("MUSIC SET ", String.valueOf(ID));
-            startService(music);
         }
     }
-    private void stopallService()
-    {}
+    private void setVoice(String ID)
+    {
+        ID = "voice/ep-"+Episode+"/ch-"+Chapter+"/"+ID+".ogg";
+        //Stop Service, load another music then Start Service Again
+        music.removeExtra("voice");
+        music.putExtra("voice",ID);
+        Log.i("VOICE START",ID);
+    }
     private void prepareViewPager(ViewPager viewPager,ArrayList<PageJson> myPages,String path) {
         //Initialize main adapter
         ChapterReader.MainAdapter adapter=new ChapterReader.MainAdapter(getSupportFragmentManager());

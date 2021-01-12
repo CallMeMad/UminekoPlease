@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity{
 
         //Play Music
         music = new Intent(getApplicationContext(), SoundService.class);
-        music.putExtra("ID", "home_sound");
+        String path="audio/home_sound.mp3";
+        music.putExtra("ID", path);
         startService(music);
 
         //Toggle Permet de gérer en 1 Bouton l'arrêt et la repris

@@ -23,6 +23,7 @@ public class PageJson {
     public String getPagePath() {
         return page;
     }
+    public int getNumberSE(){return se.size();}
 
     public ArrayList<String> getSePath() {
         return se;
