@@ -161,44 +161,41 @@ public class ChapterReader extends AppCompatActivity {
                     finish();
                 } else {
                     //If the music is not the same as the one before
-                    String voicepath;
                     if (myPages.get(numTab).getVoicePath()) {
-                        voicepath = myPages.get(numTab).getPagePath();
+                        setVoice(myPages.get(numTab).getPagePath());
                     } else {
-                        voicepath = null;
+                       setVoice("null");
                     }
-                    Log.i("Voice", String.valueOf(myPages.get(numTab).getVoicePath()));
-                    setAll(myPages.get(numTab).getBgmPath(), myPages.get(numTab).getSePath(), voicepath);
+                    Log.i("ISVOICEFALSE", String.valueOf(myPages.get(numTab).getVoicePath()));
+                    setAll(myPages.get(numTab).getBgmPath(), myPages.get(numTab).getSePath());
                 }
                 current = myPages.get(numTab);
             }
         });
     }
 
-    private void setAll(String ID, ArrayList<String> se, String voice) {
+    private void setAll(String ID, ArrayList<String> se) {
         setMusic(ID);
         setSE(se);
-        setVoice(voice);
         startService(music);
     }
 
     private void setMusic(String ID) {
         //If the song is null
-        if(ID==null){
+        if (ID == null) {
             //We reset the song that was playing
             music.removeExtra("ID");
             music.putExtra("ID", "null");
-            music.putExtra("bgm",1);
+            music.putExtra("bgm", 1);
         }
         //If the song isn't null
-        else
-        {
+        else {
             ID = "audio/bgm/umib_" + ID + ".ogg";
             //if the previous was null we reset and set it
             if (music.getStringExtra("ID") == null) {
                 music.putExtra("ID", ID);
                 Log.i("MUSICSET", ID);
-                music.putExtra("bgm",2);
+                music.putExtra("bgm", 2);
             }
             //If the previous music was not
             else {
@@ -222,56 +219,53 @@ public class ChapterReader extends AppCompatActivity {
     private void setSE(ArrayList<String> ID) {
         //For our 2 Sound Effect
         for (int i = 0; i < ID.size(); i++) {
-            ID.set(i, "audio/se/umilse_" + ID.get(i) + ".ogg");
-            if (i == 0) {
-                //If the prev is null
-                if (music.getStringExtra("se1") == null) {
-                    //If the new is not
-                    if (ID.get(i) != null) {
-                        //We set variable
-                        music.removeExtra("se1");
-                        music.putExtra("se1", ID.get(i));
-                        music.removeExtra("se_1");
-                        music.putExtra("se_1", false);
-                    }
-                }
-                //if both aren't null
-                else if (ID.get(i) != null) {
-                    //Stop Service, load another music then Start Service Again
-                    if (!music.getStringExtra("se1").equals(ID.get(i))) {
-                        music.removeExtra("se1");
-                        music.putExtra("se1", ID);
-                        music.removeExtra("se_1");
-                        music.putExtra("se_1", true);
-                    }
-                }
+            //If the ID is null we reset and don't set the next one
+            if (ID.get(i) == null) {
+                music.removeExtra("se1");
+                music.putExtra("se1", (String) null);
+                music.removeExtra("se_1");
+                music.putExtra("se_1", 1);
             } else {
-                if (music.getStringExtra("se2") == null) {
-                    if (ID.get(i) != null) {
-                        music.removeExtra("se2");
-                        music.putExtra("se2", ID.get(i));
-                    }
-                } else if (ID.get(i) != null) {
-                    //Stop Service, load another music then Start Service Again
-                    if (!music.getStringExtra("se2").equals(ID.get(i))) {
-                        music.removeExtra("se2");
-                        music.putExtra("se2", ID);
-                    }
+                String path="audio/se/umilse_" + ID.get(i) + ".ogg";
+                //If the prev is null we reset and set the new one
+                if (music.getStringExtra("se" + (i + 1)) == null) {
+                    //We set variable
+                    music.removeExtra("se" + (i + 1));
+                    music.putExtra("se" + (i + 1), path);
+                    music.removeExtra("se_" + (i + 1));
+                    music.putExtra("se_" + (i + 1), 2);
+                }
+                //if the song are the same
+                else if (music.getStringExtra("se" + (i + 1)).equals(ID.get(i))) {
+                    music.removeExtra("se_" + (i + 1));
+                    music.putExtra("se_" + (i + 1), 0);
+                }
+                //if they are not we reset and set our
+                else {
+                    music.removeExtra("se" + (i + 1));
+                    music.putExtra("se" + (i + 1), path);
+                    music.removeExtra("se_" + (i + 1));
+                    music.putExtra("se_" + (i + 1), 2);
                 }
             }
         }
     }
 
     private void setVoice(String ID) {
-        if (ID != null) {
+        //If it is true we reset and set
+        if (!ID.equals("null")) {
             ID = "voice/ep-" + Episode + "/ch-" + Chapter + "/" + ID + ".ogg";
             //Stop Service, load another music then Start Service Again
             music.removeExtra("voice");
             music.putExtra("voice", ID);
+            music.removeExtra("voices");
+            music.putExtra("voices", 2);
         } else {
-            music.putExtra("voices", false);
+            music.removeExtra("voice");
+            music.putExtra("voice", ID);
+            music.removeExtra("voices");
+            music.putExtra("voices", 1);
         }
-
     }
 
     private void prepareViewPager(ViewPager viewPager, ArrayList<PageJson> myPages, String path) {

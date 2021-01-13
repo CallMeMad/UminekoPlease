@@ -72,7 +72,7 @@ public class SoundService extends Service {
             se_1=intent.getIntExtra("se_1",2);
             se_2=intent.getIntExtra("se_2",2);
             voices=intent.getIntExtra("voices",2);
-            Log.i("DATA",ID[0]+"   "+ID[3]);
+            Log.i("DATA",ID[0]+" "+ ID[1]+" "+ID[2]+" "+ID[3]);
             new AsyncCaller().execute();
             return START_STICKY;
     }
@@ -84,6 +84,21 @@ public class SoundService extends Service {
         {
             myMediaPlayer.stop();
             myMediaPlayer.release();
+        }
+        if(se1!=null)
+        {
+            se1.stop();
+            se1.release();
+        }
+        if(se2!=null)
+        {
+            se2.stop();
+            se2.release();
+        }
+        if(voice!=null)
+        {
+            voice.stop();
+            voice.release();
         }
         stopSelf();
         super.onDestroy();
@@ -178,8 +193,8 @@ public class SoundService extends Service {
             afd.close();
             se2.prepareAsync(); // prepare async to not block main thread
         } catch (IOException e) {
-            Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+           // Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
+            //e.printStackTrace();
         }
         //mp3 will be started after completion of preparing...
         se2.setOnPreparedListener(player -> {
@@ -208,8 +223,8 @@ public class SoundService extends Service {
             afd.close();
             voice.prepareAsync(); // prepare async to not block main thread
         } catch (IOException e) {
-            Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+            //Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
+            //e.printStackTrace();
         }
         //mp3 will be started after completion of preparing...
         voice.setOnPreparedListener(player -> {
@@ -258,7 +273,6 @@ public class SoundService extends Service {
             se2.setVolume(0, 0);
             se2.setLooping(true);
             voice.setVolume(0, 0);
-            voice.setLooping(false);
             volume[0] = 0; volume[1] = 0;volume[2] = 0;volume[3] = 0;
             myMediaPlayer.start();
             se1.start();
