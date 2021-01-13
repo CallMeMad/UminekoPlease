@@ -41,7 +41,22 @@ public class ChapterReader extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadingSoundService();
+        loadingViewpager();
+        //Return Button
+        ImageView imageView = findViewById(R.id.retour);
+        imageView.setOnClickListener(v -> {
+            stopService(music);
+            finish();
+        });
+    }
 
+    private void loadingSoundService()
+    {
+        //Set Service
+        music = new Intent(this, SoundService.class);
+    }
+    private void loadingViewpager(){
         //Initialize my Chapter
         ArrayList<PageJson> myChapter = new ArrayList<>();
         Volume = getIntent().getStringExtra("Volume");
@@ -52,55 +67,36 @@ public class ChapterReader extends AppCompatActivity {
         //Get the .json
         JSONResourceReader jsonReader = new JSONResourceReader(getResources(), getResources().getIdentifier("ep" + Episode, "raw", getPackageName()));
         EpisodeJson jsonObj = jsonReader.constructUsingGson(EpisodeJson.class);
-        String title = jsonObj.getTitle();
-        String art = jsonObj.getArt();
-        String Volume = jsonObj.getChapterVolume(Chapter);
         myChapter = jsonObj.getPages(Chapter);
-        Log.i("title", title);
-        Log.i("Art", art);
-        Log.i("Volume", String.valueOf(Volume));
-        Log.i("chapter", String.valueOf(myChapter.size()));
         setContentView(R.layout.umineko_episode01_chapter01);
 
         //Change the appbar Text
-        TextView textView = (TextView) findViewById(R.id.Titre);
+        TextView textView = findViewById(R.id.Titre);
         textView.setText(ChapterName);
-
         //assign Variable
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
         boolean startingPoint = getIntent().getBooleanExtra("start", true);
-
-        //Set Service
-        music = new Intent(this, SoundService.class);
-
-        //add the page and the ID in array list
-        myChapter.add(new PageJson("cover2", "", null, false));
-        myChapter.add(0, new PageJson("cover", "", null, false));
-
         //Choose if we start at the end or not
         int start = 0;
         Log.i("STARTING POINT", String.valueOf(startingPoint));
         //If there is a next
         if (jsonObj.getNextChapter(Chapter) != null) {
-            myChapter.add(new PageJson("next", "", null, false));
+            myChapter.add(new PageJson("cover", "", null, false));
             NextChapter = jsonObj.getNextChapter(Chapter);
         }
         //If there is a prev
         if (jsonObj.getPrevChapter(Chapter) != null) {
             Log.i("PrevChapter", jsonObj.getPrevChapter(Chapter));
-            myChapter.add(0, new PageJson("prev", "", null, false));
+            myChapter.add(0, new PageJson("cover", "",null, false));
             PrevChapter = jsonObj.getPrevChapter(Chapter);
         }
-
-
         //prepare view pager
         prepareViewPager(viewPager, myChapter, path);
-
         //setup with view pager
         tabLayout.setupWithViewPager(viewPager);
 
-        //If there is a next
+        //Set Up the StartingPoint
         if (jsonObj.getNextChapter(Chapter) != null) {
             //Set the starting point
             if (startingPoint) {
@@ -118,64 +114,56 @@ public class ChapterReader extends AppCompatActivity {
             if (startingPoint) {
                 start = myChapter.size() - 2;
                 tabLayout.selectTab(tabLayout.getTabAt(start));
-            } else {
-                tabLayout.selectTab(tabLayout.getTabAt(0));
-            }
+            } else {tabLayout.selectTab(tabLayout.getTabAt(0));}
         }
-
         listener(myChapter, start);
-        //Return Button
-        ImageView imageView = findViewById(R.id.retour);
-        imageView.setOnClickListener(v -> {
-            stopService(music);
-            finish();
-        });
     }
-
     private void listener(ArrayList<PageJson> myPages, int startingpoint) {
         //Play music depending on the page
         //Check the page we're at
         Collections.reverse(myPages);
+        boolean toggle=false;
+        setAll(myPages.get(startingpoint).getBgmPath(), myPages.get(startingpoint).getSePath(),myPages.get(startingpoint).getVoicePath(),myPages.get(startingpoint).getPagePath());
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             PageJson current = myPages.get(startingpoint);
-
+            String NextChapterTobeDisplayed="";
+            boolean StartToNextChapter=true;
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 int numTab = tab.getPosition();
                 Log.i("NUMTAB", String.valueOf(numTab));
-                Log.i("PAGEPATH", myPages.get(numTab).getPagePath());
-                if (myPages.get(numTab).getPagePath().equals("next")) {
+                Log.i("SIZE", String.valueOf(myPages.size()));
+                if(numTab==0){NextChapterTobeDisplayed=NextChapter;}
+                else if(numTab==myPages.size()-1){NextChapterTobeDisplayed=PrevChapter;StartToNextChapter=false;}
+                if (myPages.get(numTab).getPagePath().equals("cover")) {
                     Log.i("Volume", Volume);
-                    Log.i("ChapterName", NextChapter);
-                    Intent intent = new Intent(getApplicationContext(), ChapterReader.class).putExtra("start", true).putExtra("ep", getIntent().getStringExtra("ep"))
-                            .putExtra("Volume", Volume).putExtra("ChapterName", NextChapter);
-                    startActivity(intent);
-                    finish();
-                } else if (myPages.get(numTab).getPagePath().equals("prev")) {
-                    Log.i("Volume", Volume);
-                    Log.i("ChapterName", PrevChapter);
-                    Intent intent = new Intent(getApplicationContext(), ChapterReader.class).putExtra("start", false).putExtra("ep", getIntent().getStringExtra("ep"))
-                            .putExtra("Volume", Volume).putExtra("ChapterName", PrevChapter);
-                    startActivity(intent);
-                    finish();
-                } else {
+                    Log.i("ChapterName", NextChapterTobeDisplayed);
+                    getIntent().removeExtra("start");
+                    getIntent().removeExtra("ep");
+                    getIntent().removeExtra("Volume");
+                    getIntent().removeExtra("ChapterName");
+                    getIntent().putExtra("start", StartToNextChapter).putExtra("ep", Episode)
+                            .putExtra("Volume", Volume).putExtra("ChapterName", NextChapterTobeDisplayed);
+                    loadingViewpager();
+                }
+                else {
                     //If the music is not the same as the one before
-                    if (myPages.get(numTab).getVoicePath()) {
-                        setVoice(myPages.get(numTab).getPagePath());
-                    } else {
-                       setVoice("null");
-                    }
                     Log.i("ISVOICEFALSE", String.valueOf(myPages.get(numTab).getVoicePath()));
-                    setAll(myPages.get(numTab).getBgmPath(), myPages.get(numTab).getSePath());
+                    setAll(myPages.get(numTab).getBgmPath(), myPages.get(numTab).getSePath(),myPages.get(numTab).getVoicePath(),myPages.get(numTab).getPagePath());
                 }
                 current = myPages.get(numTab);
             }
         });
     }
 
-    private void setAll(String ID, ArrayList<String> se) {
-        setMusic(ID);
+    private void setAll(String bgm, ArrayList<String> se,Boolean voice,String Currentpage) {
+        if (voice) {
+            setVoice(Currentpage);
+        } else {
+            setVoice("null");
+        }
+        setMusic(bgm);
         setSE(se);
         startService(music);
     }
@@ -218,36 +206,52 @@ public class ChapterReader extends AppCompatActivity {
 
     private void setSE(ArrayList<String> ID) {
         //For our 2 Sound Effect
-        for (int i = 0; i < ID.size(); i++) {
-            //If the ID is null we reset and don't set the next one
-            if (ID.get(i) == null) {
-                music.removeExtra("se1");
-                music.putExtra("se1", (String) null);
-                music.removeExtra("se_1");
-                music.putExtra("se_1", 1);
-            } else {
-                String path="audio/se/umilse_" + ID.get(i) + ".ogg";
-                //If the prev is null we reset and set the new one
-                if (music.getStringExtra("se" + (i + 1)) == null) {
-                    //We set variable
-                    music.removeExtra("se" + (i + 1));
-                    music.putExtra("se" + (i + 1), path);
-                    music.removeExtra("se_" + (i + 1));
-                    music.putExtra("se_" + (i + 1), 2);
-                }
-                //if the song are the same
-                else if (music.getStringExtra("se" + (i + 1)).equals(ID.get(i))) {
-                    music.removeExtra("se_" + (i + 1));
-                    music.putExtra("se_" + (i + 1), 0);
-                }
-                //if they are not we reset and set our
-                else {
-                    music.removeExtra("se" + (i + 1));
-                    music.putExtra("se" + (i + 1), path);
-                    music.removeExtra("se_" + (i + 1));
-                    music.putExtra("se_" + (i + 1), 2);
+        if(ID!=null) {
+            for (int i = 0; i < ID.size(); i++) {
+                //If the ID is null we reset and don't set the next one
+                if (ID.get(i) == null) {
+                    music.removeExtra("se"+ (i + 1));
+                    music.putExtra("se"+ (i + 1), (String) null);
+                    music.removeExtra("se_"+ (i + 1));
+                    music.putExtra("se_"+ (i + 1), 1);
+                } else {
+                    String path = "audio/se/umilse_" + ID.get(i) + ".ogg";
+                    //If the prev is null we reset and set the new one
+                    if (music.getStringExtra("se" + (i + 1)) == null) {
+                        //We set variable
+                        music.removeExtra("se" + (i + 1));
+                        music.putExtra("se" + (i + 1), path);
+                        music.removeExtra("se_" + (i + 1));
+                        music.putExtra("se_" + (i + 1), 2);
+                    }
+                    //if the song are the same as the first one
+                    else if (music.getStringExtra("se1").equals(ID.get(i))) {
+                        music.removeExtra("se_1");
+                        music.putExtra("se_1", 0);
+                    }
+                    //if the se is the same as the second one
+                    else if( music.getStringExtra("se"+ID.size()).equals(ID.get(i)))
+                    {
+                        music.removeExtra("se_2");
+                        music.putExtra("se_2", 0);
+                    }
+                    //if they are not we reset and set our
+                    else {
+                        music.removeExtra("se" + (i + 1));
+                        music.putExtra("se" + (i + 1), path);
+                        music.removeExtra("se_" + (i + 1));
+                        music.putExtra("se_" + (i + 1), 2);
+                    }
                 }
             }
+        }
+        else{
+            music.removeExtra("se_1");
+            music.removeExtra("se1");
+            music.removeExtra("se2");
+            music.removeExtra("se_2");
+            music.putExtra("se_1", 1);
+            music.putExtra("se_2", 1);
         }
     }
 

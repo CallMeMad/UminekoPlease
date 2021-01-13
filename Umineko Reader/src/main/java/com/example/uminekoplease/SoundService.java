@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -133,7 +132,7 @@ public class SoundService extends Service {
             afd.close();
             myMediaPlayer.prepareAsync(); // prepare async to not block main thread
         } catch (IOException e) {
-            Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
         //mp3 will be started after completion of preparing...
@@ -163,12 +162,13 @@ public class SoundService extends Service {
             afd.close();
             se1.prepareAsync(); // prepare async to not block main thread
         } catch (IOException e) {
-            Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(context, "ogg not found", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
         //mp3 will be started after completion of preparing...
         se1.setOnPreparedListener(player -> {
-            new FadeIn().execute();
+            se1.setVolume(1, 1);
+            se1.start();
         });
     }
     private void ResetSe_2()
@@ -198,7 +198,8 @@ public class SoundService extends Service {
         }
         //mp3 will be started after completion of preparing...
         se2.setOnPreparedListener(player -> {
-            new FadeIn().execute();
+            se2.setVolume(1, 1);
+            se2.start();
         });
     }
     private void ResetVoice()
@@ -228,7 +229,8 @@ public class SoundService extends Service {
         }
         //mp3 will be started after completion of preparing...
         voice.setOnPreparedListener(player -> {
-            new FadeIn().execute();
+            voice.setVolume(1, 1);
+            voice.start();
         });
     }
     //We use it to fade away our sound when we stop our service
@@ -265,31 +267,34 @@ public class SoundService extends Service {
         protected Void doInBackground(Void... locs) {
             //If a media is playing
             //Fade In
-
             myMediaPlayer.setVolume(0, 0);
             myMediaPlayer.setLooping(true);
-            se1.setVolume(0, 0);
+            volume[0] = 0;
+            /*se1.setVolume(1, 1);
             se1.setLooping(true);
-            se2.setVolume(0, 0);
+            se2.setVolume(1, 1);
             se2.setLooping(true);
-            voice.setVolume(0, 0);
+            voice.setVolume(1, 1);
             volume[0] = 0; volume[1] = 0;volume[2] = 0;volume[3] = 0;
             myMediaPlayer.start();
             se1.start();
             se2.start();
-            voice.start();
+            voice.start();*/
+            myMediaPlayer.start();
             while (volume[0] < 1) {
-                volume[0] += 0.01f; volume[1] += 0.01f; volume[2] += 0.01f;volume[3] += 0.01f;
+                volume[0] += 0.01f;
+                /*volume[1] += 0.01f; volume[2] += 0.01f;volume[3] += 0.01f;*/
                 myMediaPlayer.setVolume(volume[0], volume[0]);
-                se1.setVolume(volume[1], volume[1]);
+                /*se1.setVolume(volume[1], volume[1]);
                 se2.setVolume(volume[2], volume[2]);
-                voice.setVolume(volume[3], volume[3]);
+                voice.setVolume(volume[3], volume[3]);*/
             }
-            volume[0] = 1;volume[1] = 1; volume[2] = 1; volume[3] = 1;
+            volume[0] = 1;
+           /* volume[1] = 1; volume[2] = 1; volume[3] = 1;*/
             myMediaPlayer.setVolume(volume[0], volume[0]);
-            se1.setVolume(volume[1], volume[1]);
+            /*se1.setVolume(volume[1], volume[1]);
             se2.setVolume(volume[2], volume[2]);
-            voice.setVolume(volume[3], volume[3]);
+            voice.setVolume(volume[3], volume[3]);*/
             return null;
         }
     }
