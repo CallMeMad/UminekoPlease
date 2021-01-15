@@ -67,6 +67,19 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0" />
 
+            <ImageView
+                android:id="@+id/music"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@id/background"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/legend_of_the_golden_witch"
+                android:maxWidth="60dp"
+                android:maxHeight="60dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/music1" />
+
 
         </RelativeLayout>
 
@@ -78,18 +91,7 @@
             android:contentDescription="@string/legend_of_the_golden_witch"
             android:src="@drawable/logo" />
 
-        <ImageView
-            android:id="@+id/music"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_below="@id/episodelist"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/legend_of_the_golden_witch"
-            android:maxWidth="60dp"
-            android:maxHeight="60dp"
-            android:layout_marginLeft="5dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/music1" />
+
 
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

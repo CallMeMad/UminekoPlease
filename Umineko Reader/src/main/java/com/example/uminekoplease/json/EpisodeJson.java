@@ -60,11 +60,11 @@ public class EpisodeJson {
                 {
                     if(Chapter.equals(String.valueOf(volumes.get(String.valueOf(j+1)).get(i))))
                     {
-                        return String.valueOf(volumes.get(String.valueOf(j+1)).get(i));
+                        return String.valueOf(j+1);
                     }
                 }
             }
-        return Volume;
+        return null;
     }
 
 

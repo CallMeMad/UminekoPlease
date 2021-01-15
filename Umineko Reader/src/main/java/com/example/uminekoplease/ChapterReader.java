@@ -49,38 +49,36 @@ public class ChapterReader extends AppCompatActivity {
         startingPoint = getIntent().getBooleanExtra("start", true);
         music = new Intent(this, SoundService.class);
         loadingViewpager();
-        //Return Button
-        ImageView imageView = findViewById(R.id.retour);
-        imageView.setOnClickListener(v -> {
-            stopService(music);
-            finish();
-        });
     }
 
     private void loadingViewpager() {
+
         //Set Variable
         String path = "img/ep-" + Episode + "/vol-" + Volume + "/ch-" + Chapter + "/";
         JSONResourceReader jsonReader = new JSONResourceReader(getResources(), getResources().getIdentifier("ep" + Episode, "raw", getPackageName()));
         EpisodeJson jsonObj = jsonReader.constructUsingGson(EpisodeJson.class);
         if(jsonObj.getNextChapter(Chapter)!=null){jsonObj.getChapter(Chapter).add(new PageJson("cover",null,null,false));}
         if(jsonObj.getPrevChapter(Chapter)!=null){jsonObj.getChapter(Chapter).add(0,new PageJson("cover",null,null,false));}
-        setContentView(R.layout.umineko_episode01_chapter01);
-        tabLayout = findViewById(R.id.tab_layout);
-        viewPager = findViewById(R.id.view_pager);
 
         //Change the appbar Text
+        setContentView(R.layout.umineko_episode01_chapter01);
         TextView textView = findViewById(R.id.Titre);
         textView.setText("Chapter " + Chapter);
 
+        tabLayout = findViewById(R.id.tab_layout);
+        viewPager = findViewById(R.id.view_pager);
         //prepare view pager
         prepareViewPager(viewPager, jsonObj, path);
         //setup with view pager
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.selectTab(tabLayout.getTabAt(start));
-        ArrayList<PageJson> myPages = jsonObj.getChapter(Chapter);
-        Collections.reverse(myPages);
-        setStart(myPages);
-        //listener(jsonObj, start);
+        listener(jsonObj);
+        //Return Button
+        ImageView imageView = findViewById(R.id.retour);
+        imageView.setOnClickListener(v -> {
+            stopService(music);
+            finish();
+        });
     }
 
     private void listener(EpisodeJson jsonObj) {
@@ -110,10 +108,12 @@ public class ChapterReader extends AppCompatActivity {
                         startingPoint = false;
                     }
                     Volume=jsonObj.getChapterVolume(NextChapterTobeDisplayed);
+                    Chapter = NextChapterTobeDisplayed;
+                    //tabLayout.clearOnTabSelectedListeners();
                     loadingViewpager();
                 } else {
                     //If the music is not the same as the one before
-                    compareAll(current,myPages.get(numTab));
+                    //compareAll(current,myPages.get(numTab));
                 }
                 current = myPages.get(numTab);
             }
@@ -244,16 +244,16 @@ public class ChapterReader extends AppCompatActivity {
 
     private void setMusic2(String bgm,int command) {
         music.removeExtra("ID");
-        music.putExtra("ID", "audio/bgm/umib_" + bgm + ".ogg");
-        music.removeExtra("bgmState");
-        if (command==2) {
-            music.putExtra("bgmState", 2);
-        } else if(command==1) {
-            music.putExtra("bgmState", 1);
-        }
-        else
-        {
-            music.putExtra("bgmState", 0);
+        if(bgm!=null) {
+            music.putExtra("ID", "audio/bgm/umib_" + bgm + ".ogg");
+            music.removeExtra("bgmState");
+            if (command == 2) {
+                music.putExtra("bgmState", 2);
+            } else if (command == 1) {
+                music.putExtra("bgmState", 1);
+            } else {
+                music.putExtra("bgmState", 0);
+            }
         }
     }
 
