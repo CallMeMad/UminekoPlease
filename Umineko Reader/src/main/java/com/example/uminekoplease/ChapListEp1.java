@@ -36,15 +36,15 @@ public class ChapListEp1 extends AppCompatActivity {
         if(getIntent().getStringExtra("String").equals("Episode 1"))
         {
             chapterList.add(new Chapter("Chapter 01","02/12/2020",new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep","1")
-                    .putExtra("Volume","1").putExtra("ChapterName","1").putExtra("start",true)));
+                    .putExtra("Volume","1").putExtra("ChapterName","1").putExtra("start",false)));
             chapterList.add(new Chapter("Chapter 02","09/12/2020",new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep","1")
+                    .putExtra("Volume","1").putExtra("ChapterName","2").putExtra("start",false)));
+            chapterList.add(new Chapter("Chapter 03","10/12/2020",new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep","1")
+                    .putExtra("Volume","1").putExtra("ChapterName","1").putExtra("start",true)));
+            chapterList.add(new Chapter("Chapter 04","10/12/2020",new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep","1")
                     .putExtra("Volume","1").putExtra("ChapterName","2").putExtra("start",true)));
-            chapterList.add(new Chapter("Chapter 03","10/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
-                    .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 03").putExtra("start",true)));
-            chapterList.add(new Chapter("Chapter 04","10/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
-                    .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 04").putExtra("start",true)));
-            chapterList.add(new Chapter("Chapter 05","12/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
-                    .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 05").putExtra("start",true)));
+            chapterList.add(new Chapter("Chapter 05","12/12/2020",new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep","1")
+                    .putExtra("Volume","1").putExtra("ChapterName","5").putExtra("start",true)));
             chapterList.add(new Chapter("Chapter 06","12/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
                     .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 06").putExtra("start",true)));
             chapterList.add(new Chapter("Chapter 07","12/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
@@ -79,8 +79,8 @@ public class ChapListEp1 extends AppCompatActivity {
                     .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 21").putExtra("start",true)));
             chapterList.add(new Chapter("Tea Party","31/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
                     .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 22").putExtra("start",true)));
-            chapterList.add(new Chapter(" ???????? ","31/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
-                    .putExtra("Volume","Volume 01").putExtra("ChapterName","Chapter 23").putExtra("start",true)));
+            chapterList.add(new Chapter(" ???????? ","31/12/2020",new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep","1")
+                    .putExtra("Volume","4").putExtra("ChapterName","23").putExtra("start",true)));
         }
         else if(getIntent().getStringExtra("String").equals("Episode 2"))
         {

@@ -23,7 +23,12 @@ public class PageJson {
     public String getPagePath() {
         return page;
     }
-    public int getNumberSE(){return se.size();}
+    public int getNumberSE(){
+        if(se!=null)
+        {
+            return se.size();
+        }
+        return 0;}
 
     public ArrayList<String> getSePath() {
         return se;
@@ -31,6 +36,12 @@ public class PageJson {
 
     public Boolean getVoicePath() {
         return voice;
+    }
+
+    public String getVoicePage()
+    {
+        if(voice){return page;}
+        else return null;
     }
 }
 

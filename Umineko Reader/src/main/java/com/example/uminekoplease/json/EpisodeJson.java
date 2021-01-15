@@ -47,7 +47,7 @@ public class EpisodeJson {
             return String.valueOf(index);
         }
     }
-    public ArrayList<PageJson> getPages(String chapter) {
+    public ArrayList<PageJson> getChapter(String chapter) {
         return this.chapters.get(chapter);
     }
     public String getChapterVolume(String Chapter)
