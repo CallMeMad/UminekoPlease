@@ -140,41 +140,59 @@ public class ChapterReader extends AppCompatActivity {
         startService(music);
     }
 
-    private void compareMemoryLock(ArrayList<String> New, ArrayList<String> Old, HashMap<String, ArrayList<Integer>> MapSe, ArrayList<Integer> SeState) {
+    private void compareMemoryLock(ArrayList<String> New, ArrayList<String> Old, HashMap<String, ArrayList<Integer>> MapSe) {
         if(New.size()>MediaPlayerState.size())
         {
             for (int i = MediaPlayerState.size(); i < New.size(); i++) {
                 MediaPlayerState.put(i,2);
             }
         }
+        ArrayList<Integer> where= new ArrayList<>();
+        ArrayList<Integer> where2= new ArrayList<>();
         for (int i = 0; i < New.size(); i++) {
-            Boolean toggle = true;
-            int where=i;
+            ArrayList<Integer> SeState = new ArrayList<>();
             for (int j = 0; j < Old.size(); j++) {
                 //Get the point were the two list are the same
                 if (New.get(i).equals(Old.get(j))) {
-                    toggle=false;
                     if (j < New.size()) {
                         SeState.add(0, j);
                         SeState.add(1,0);
                         MapSe.put( "audio/se/umilse_" +New.get(i)+ ".ogg",SeState);
-                        if (i != j) {
-                            where=i;
-                        }
+                        where.add(j);
                     } else {
                         SeState.add(0, j);
                         SeState.add(1,0);
                         MapSe.put("audio/se/umilse_" +New.get(i)+ ".ogg",SeState);
-                        where=i;
+                        where.add(j);
                     }
                 }
+                else
+                {
+                    where2.add(i);
+                }
             }
-            if(toggle)
+        }
+        int y=0;
+        for(int i=0;i<New.size();i++)
+        {
+            int x=0;
+            for(int j=0;j<where.size();j++)
             {
-                SeState.add(0, where);
-                SeState.add(1,2);
-                MapSe.put("audio/se/umilse_" +New.get(i)+ ".ogg",SeState);
+                if(where.get(x)!=i)
+                {
+                    x++;
+                }
+                if(x==where.size())
+                {
+                    ArrayList<Integer> SeState = new ArrayList<>();
+                    SeState.add(0, i);
+                    SeState.add(1,2);
+                    MapSe.put("audio/se/umilse_" +New.get(where2.get(y))+ ".ogg",SeState);
+                    y++;
+                }
             }
+
+
         }
         setSe2(MapSe);
     }
@@ -223,7 +241,7 @@ public class ChapterReader extends AppCompatActivity {
             }
         } else {
             if (currentPage.getSePath() != null) {
-                compareMemoryLock(newPage.getSePath(), currentPage.getSePath(), MapSe,SeState);
+                compareMemoryLock(newPage.getSePath(), currentPage.getSePath(), MapSe);
             } else {
                 for (int i = 0; i < newPage.getNumberSE(); i++) {
                     String path = "audio/se/umilse_" + newPage.getSePath().get(i) + ".ogg";
@@ -264,7 +282,7 @@ public class ChapterReader extends AppCompatActivity {
 
     private void setSe2(HashMap<String, ArrayList<Integer>> MapSe) {
         if (MapSe != null) {
-            music.removeExtra("se");
+            music.removeExtra("MapSe");
             music.putExtra("MapSe", MapSe);
         }
     }
