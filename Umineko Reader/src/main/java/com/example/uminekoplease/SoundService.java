@@ -227,11 +227,11 @@ public class SoundService extends Service {
                 int i=0;
                 for (Map.Entry mapentry : SeMap.entrySet()) {
                     ArrayList<Integer> temp = (ArrayList<Integer>) mapentry.getValue();
-                    if (temp.get(i)!= 0) {
+                    if (temp.get(1)!= 0) {
                         ResetSe_1(temp.get(0));
                     }
-                    if (temp.get(i)== 2) {
-                        SetSe_1((String)mapentry.getKey(),i);
+                    if (temp.get(1)== 2) {
+                        SetSe_1((String)mapentry.getKey(),temp.get(0));
                     }
                     i++;
                 }

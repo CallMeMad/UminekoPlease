@@ -36,6 +36,7 @@ public class ChapterReader extends AppCompatActivity {
     private String Episode;
     private Intent music;
     private boolean startingPoint;
+    private HashMap<Integer, Integer> MediaPlayerState;
     private int start;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -47,6 +48,7 @@ public class ChapterReader extends AppCompatActivity {
         Chapter = getIntent().getStringExtra("ChapterName");
         Episode = getIntent().getStringExtra("ep");
         startingPoint = getIntent().getBooleanExtra("start", true);
+        MediaPlayerState = new HashMap<>();
         music = new Intent(this, SoundService.class);
         loadingViewpager();
     }
@@ -57,8 +59,12 @@ public class ChapterReader extends AppCompatActivity {
         String path = "img/ep-" + Episode + "/vol-" + Volume + "/ch-" + Chapter + "/";
         JSONResourceReader jsonReader = new JSONResourceReader(getResources(), getResources().getIdentifier("ep" + Episode, "raw", getPackageName()));
         EpisodeJson jsonObj = jsonReader.constructUsingGson(EpisodeJson.class);
-        if(jsonObj.getNextChapter(Chapter)!=null){jsonObj.getChapter(Chapter).add(new PageJson("cover",null,null,false));}
-        if(jsonObj.getPrevChapter(Chapter)!=null){jsonObj.getChapter(Chapter).add(0,new PageJson("cover",null,null,false));}
+        if (jsonObj.getNextChapter(Chapter) != null) {
+            jsonObj.getChapter(Chapter).add(new PageJson("cover", null, null, false));
+        }
+        if (jsonObj.getPrevChapter(Chapter) != null) {
+            jsonObj.getChapter(Chapter).add(0, new PageJson("cover", null, null, false));
+        }
 
         //Change the appbar Text
         setContentView(R.layout.umineko_episode01_chapter01);
@@ -92,159 +98,158 @@ public class ChapterReader extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             PageJson current = myPages.get(start);
             String NextChapterTobeDisplayed = "";
+
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 int numTab = tab.getPosition();
                 if (myPages.get(numTab).getPagePath().equals("cover")) {
-                    if(numTab==0)
-                    {
+                    if (numTab == 0) {
                         NextChapterTobeDisplayed = jsonObj.getNextChapter(Chapter);
-                        startingPoint=true;
-                    }
-                    else
-                    {
+                        startingPoint = true;
+                    } else {
                         NextChapterTobeDisplayed = jsonObj.getPrevChapter(Chapter);
                         startingPoint = false;
                     }
-                    Volume=jsonObj.getChapterVolume(NextChapterTobeDisplayed);
+                    Volume = jsonObj.getChapterVolume(NextChapterTobeDisplayed);
                     Chapter = NextChapterTobeDisplayed;
                     //tabLayout.clearOnTabSelectedListeners();
                     loadingViewpager();
                 } else {
                     //If the music is not the same as the one before
-                    //compareAll(current,myPages.get(numTab));
+                    compareAll(current, myPages.get(numTab));
                 }
                 current = myPages.get(numTab);
             }
         });
     }
-    private void setStart( ArrayList<PageJson> myPages)
-    {
-        setMusic2(myPages.get(start).getBgmPath(),2);
-        HashMap<String,ArrayList<Integer>> MapSe = new HashMap<String,ArrayList<Integer>>();
-        for(int i=0;i<myPages.get(start).getNumberSE();i++)
-        {
+
+    private void setStart(ArrayList<PageJson> myPages) {
+        setMusic2(myPages.get(start).getBgmPath(), 2);
+        HashMap<String, ArrayList<Integer>> MapSe = new HashMap<String, ArrayList<Integer>>();
+        for (int i = 0; i < myPages.get(start).getNumberSE(); i++) {
+            ArrayList<Integer> SeState = new ArrayList<>();
             String path = "audio/se/umilse_" + myPages.get(start).getSePath().get(i) + ".ogg";
-            ArrayList<Integer> temp = new ArrayList<>();
-            temp.add(0,2);
-            temp.add(1,2);
-            MapSe.put(path,temp);
+            MediaPlayerState.put(i, 2);
+            SeState.add(0, i);
+            SeState.add(1, 2);
+            MapSe.put(path, SeState);
         }
         setSe2(MapSe);
         setVoice(myPages.get(start).getVoicePage());
         startService(music);
     }
-    private void compareMemoryLock(ArrayList<String> New, ArrayList<String> Old)
-    {
-        ArrayList<String> values;
-        values=New;
-        ArrayList<Integer> State = new ArrayList<Integer>();
 
-        for(int i=0;i<Math.max(New.size(),Old.size());i++)
+    private void compareMemoryLock(ArrayList<String> New, ArrayList<String> Old, HashMap<String, ArrayList<Integer>> MapSe, ArrayList<Integer> SeState) {
+        if(New.size()>MediaPlayerState.size())
         {
-            State.add(1);
+            for (int i = MediaPlayerState.size(); i < New.size(); i++) {
+                MediaPlayerState.put(i,2);
+            }
         }
-        for(int i=0;i<New.size();i++)
-        {
-            for(int j=0;j<Old.size();j++)
-            {
-                if(values.get(j)==null){values.set(j,"0");}
+        for (int i = 0; i < New.size(); i++) {
+            Boolean toggle = true;
+            int where=i;
+            for (int j = 0; j < Old.size(); j++) {
                 //Get the point were the two list are the same
-                if(New.get(i).equals(Old.get(j)))
-                {
-                    if(j<New.size())
-                    {
-                        String temp= New.get(j);
-                        values.set(j,New.get(i));
-                        values.set(i,temp);
-                        State.set(j,0);
-                        if(i!=j){State.set(i,2);}
-                    }
-                    else
-                    {
-                        values.set(j, New.get(i));
-                        values.set(i, "0");
-                        State.set(i, 1);
-                        State.set(j, 0);
+                if (New.get(i).equals(Old.get(j))) {
+                    toggle=false;
+                    if (j < New.size()) {
+                        SeState.add(0, j);
+                        SeState.add(1,0);
+                        MapSe.put( "audio/se/umilse_" +New.get(i)+ ".ogg",SeState);
+                        if (i != j) {
+                            where=i;
+                        }
+                    } else {
+                        SeState.add(0, j);
+                        SeState.add(1,0);
+                        MapSe.put("audio/se/umilse_" +New.get(i)+ ".ogg",SeState);
+                        where=i;
                     }
                 }
             }
+            if(toggle)
+            {
+                SeState.add(0, where);
+                SeState.add(1,2);
+                MapSe.put("audio/se/umilse_" +New.get(i)+ ".ogg",SeState);
+            }
         }
-        //setSe2(values,State);
+        setSe2(MapSe);
     }
-    private void compareBgm(PageJson currentPage, PageJson newPage)
-    {
+
+    private void compareBgm(PageJson currentPage, PageJson newPage) {
         //if new = notNull we set for current=null or current=!new
         if (newPage.getBgmPath() != null) {
             if (currentPage.getBgmPath() == null) {
-                setMusic2(newPage.getBgmPath(),2);
+                setMusic2(newPage.getBgmPath(), 2);
             } else if (!currentPage.getBgmPath().equals(newPage.getBgmPath())) {
-                setMusic2(newPage.getBgmPath(),2);
-            }
-            else
-            {
-                Log.i("MUSIC","Same");
-                setMusic2(newPage.getBgmPath(),0);
+                setMusic2(newPage.getBgmPath(), 2);
+            } else {
+                Log.i("MUSIC", "Same");
+                setMusic2(newPage.getBgmPath(), 0);
             }
         }
         if (newPage.getBgmPath() == null) {
-            setMusic2("reset",1);
+            setMusic2("reset", 1);
         }
     }
-    private void compareVoice(PageJson newPage)
-    {
+
+    private void compareVoice(PageJson newPage) {
         //if voice is false reset else set the new one
-        if(newPage.getVoicePath()){
+        if (newPage.getVoicePath()) {
             Log.i("VoiceTrue", String.valueOf(newPage.getVoicePath()));
-            setVoice(newPage.getPagePath());}
-        else{setVoice("null");}
-    }
-    private void compareSE(PageJson currentPage, PageJson newPage)
-    {
-        ArrayList<Integer> State = new ArrayList<Integer>();
-        //If new is null we just set the new one
-        if(newPage.getSePath()==null)
-        {
-            if(currentPage.getSePath()!=null)
-            {
-                for(int i=0;i<currentPage.getSePath().size();i++)
-                {
-                    State.add(1);
-                }
-                ArrayList<String> reset = null; reset.add("resetAll");
-                //setSe2(reset,State);
-            }
-        }
-        else
-        {
-            if(currentPage.getSePath()!=null)
-            {
-                compareMemoryLock(newPage.getSePath(),currentPage.getSePath());
-            }
-            else
-            {
-                for(int i=0;i<newPage.getSePath().size();i++)
-                {
-                    State.set(i,2);
-                }
-                //setSe2(newPage.getSePath(),State);
-            }
+            setVoice(newPage.getPagePath());
+        } else {
+            setVoice("null");
         }
     }
+
+    private void compareSE(PageJson currentPage, PageJson newPage) {
+        HashMap<String, ArrayList<Integer>> MapSe = new HashMap<String, ArrayList<Integer>>();
+        ArrayList<Integer> SeState = new ArrayList<>();
+        //If new is null we just reset the new one
+        if (newPage.getSePath() == null) {
+            if (currentPage.getSePath() != null) {
+                for (int i = 0; i < currentPage.getSePath().size(); i++) {
+                    MediaPlayerState.put(i, 1);
+                    SeState.add(0, i);
+                    SeState.add(1, 1);
+                    SeState.set(1, 1);
+                    MapSe.put("null", SeState);
+                }
+                setSe2(MapSe);
+            }
+        } else {
+            if (currentPage.getSePath() != null) {
+                compareMemoryLock(newPage.getSePath(), currentPage.getSePath(), MapSe,SeState);
+            } else {
+                for (int i = 0; i < newPage.getNumberSE(); i++) {
+                    String path = "audio/se/umilse_" + newPage.getSePath().get(i) + ".ogg";
+                    MediaPlayerState.put(i, 2);
+                    SeState.set(0, i);
+                    SeState.set(1, 2);
+                    MapSe.put(path, SeState);
+                }
+                setSe2(MapSe);
+            }
+        }
+    }
+
     private void compareAll(PageJson currentPage, PageJson newPage) {
         /*Compare BGM*/
-        compareBgm(currentPage,newPage);
+        compareBgm(currentPage, newPage);
         /*Compare Voice*/
         compareVoice(newPage);
         /*Compare all Sound Effect*/
-       compareSE(currentPage,newPage);
-       startService(music);
+        compareSE(currentPage, newPage);
+        startService(music);
     }
 
-    private void setMusic2(String bgm,int command) {
+    private void setMusic2(String bgm, int command) {
         music.removeExtra("ID");
-        if(bgm!=null) {
+        if (bgm != null) {
             music.putExtra("ID", "audio/bgm/umib_" + bgm + ".ogg");
             music.removeExtra("bgmState");
             if (command == 2) {
@@ -257,18 +262,18 @@ public class ChapterReader extends AppCompatActivity {
         }
     }
 
-    private void setSe2( HashMap<String,ArrayList<Integer>> MapSe)
-    {
-        if(MapSe!=null) {
+    private void setSe2(HashMap<String, ArrayList<Integer>> MapSe) {
+        if (MapSe != null) {
             music.removeExtra("se");
             music.putExtra("MapSe", MapSe);
         }
     }
+
     private void setVoice(String ID) {
         //If it is true we reset and set
-        if (ID!=null) {
+        if (ID != null) {
             ID = "voice/ep-" + Episode + "/ch-" + Chapter + "/" + ID + ".ogg";
-            Log.i("PATH",ID);
+            Log.i("PATH", ID);
             //we Set the new one
             music.removeExtra("voice");
             music.putExtra("voice", ID);
@@ -280,6 +285,7 @@ public class ChapterReader extends AppCompatActivity {
             music.putExtra("voiceState", 1);
         }
     }
+
     private void prepareViewPager(ViewPager viewPager, EpisodeJson jsonObj, String path) {
         //Initialize main adapter
         ChapterReader.MainAdapter adapter = new ChapterReader.MainAdapter(getSupportFragmentManager());
@@ -309,23 +315,20 @@ public class ChapterReader extends AppCompatActivity {
         if (jsonObj.getPrevChapter(Chapter) != null) {
             //Set the starting point
             if (startingPoint) {
-                start =adapter.getCount()-2;
+                start = adapter.getCount() - 2;
             } else {
-                if(jsonObj.getNextChapter(Chapter)!=null)
-                {
+                if (jsonObj.getNextChapter(Chapter) != null) {
                     start = 1;
-                }
-                else start=0;
+                } else start = 0;
             }
         } else {
             if (startingPoint) {
-                start = adapter.getCount()-1;
+                start = adapter.getCount() - 1;
             } else {
-                if(jsonObj.getNextChapter(Chapter)!=null)
-                {
+                if (jsonObj.getNextChapter(Chapter) != null) {
                     start = 0;
                 }
-                start=1;
+                start = 1;
             }
         }
     }
