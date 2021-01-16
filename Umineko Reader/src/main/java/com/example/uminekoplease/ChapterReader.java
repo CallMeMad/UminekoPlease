@@ -191,8 +191,15 @@ public class ChapterReader extends AppCompatActivity {
                     y++;
                 }
             }
-
-
+        }
+        y=MapSe.size();
+        while (y<Old.size())
+        {
+            ArrayList<Integer> SeState = new ArrayList<>();
+            SeState.add(0, y);
+            SeState.add(1,1);
+            MapSe.put("audio/se/umilse_" +"0"+ ".ogg",SeState);
+            y++;
         }
         setSe2(MapSe);
     }
