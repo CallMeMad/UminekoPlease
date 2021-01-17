@@ -61,10 +61,9 @@ public class SoundService extends Service {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @SuppressWarnings("unchecked")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //Set up the sound effect
-        String[] seArrayString = intent.getStringArrayExtra("se");
         //Set up all ID
         IDBgm=intent.getStringExtra("ID");
         IDvoice=intent.getStringExtra("voice");
@@ -143,9 +142,7 @@ public class SoundService extends Service {
             e.printStackTrace();
         }
         //mp3 will be started after completion of preparing...
-        myMediaPlayer.setOnPreparedListener(player -> {
-            new FadeIn().execute();
-        });
+        myMediaPlayer.setOnPreparedListener(player -> new FadeIn().execute());
     }
 
     private void ResetSe_1(int index) {
@@ -167,6 +164,7 @@ public class SoundService extends Service {
             if (afd == null) {
                 Log.i(TAG, "afd null");
             }
+            assert afd != null;
             se[index].setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
             se[index].prepareAsync(); // prepare async to not block main thread
@@ -199,6 +197,7 @@ public class SoundService extends Service {
             if (afd == null) {
                 Log.i(TAG, "afd null");
             }
+            assert afd != null;
             voice.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
             voice.prepareAsync(); // prepare async to not block main thread
@@ -215,6 +214,7 @@ public class SoundService extends Service {
 
     //We use it to fade away our sound when we stop our service
     @SuppressLint("StaticFieldLeak")
+    @SuppressWarnings("unchecked")
     private class AsyncCaller extends AsyncTask<Void, Void, Void> {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -224,7 +224,6 @@ public class SoundService extends Service {
             }
             if(SeMap!=null)
             {
-                int i=0;
                 for (Map.Entry mapentry : SeMap.entrySet()) {
                     ArrayList<Integer> temp = (ArrayList<Integer>) mapentry.getValue();
                     if (temp.get(1)!= 0) {
@@ -233,7 +232,6 @@ public class SoundService extends Service {
                     if (temp.get(1)== 2) {
                         SetSe_1((String)mapentry.getKey(),temp.get(0));
                     }
-                    i++;
                 }
             }
             if (voiceState != 0) {
@@ -259,6 +257,7 @@ public class SoundService extends Service {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class FadeIn extends AsyncTask<Void, Void, Void> {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override

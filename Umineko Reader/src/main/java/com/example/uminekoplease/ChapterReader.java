@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.uminekoplease.json.EpisodeJson;
@@ -31,6 +31,7 @@ public class ChapterReader extends AppCompatActivity {
     //Initialize variable
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private ChapterReader.MainAdapter adapter;
     private String Chapter;
     private String Volume;
     private String Episode;
@@ -49,11 +50,12 @@ public class ChapterReader extends AppCompatActivity {
         Episode = getIntent().getStringExtra("ep");
         startingPoint = getIntent().getBooleanExtra("start", true);
         MediaPlayerState = new HashMap<>();
+        adapter = new ChapterReader.MainAdapter(getSupportFragmentManager());
         music = new Intent(this, SoundService.class);
-        loadingViewpager();
+        loadingViewpager(true);
     }
 
-    private void loadingViewpager() {
+    private void loadingViewpager(boolean first) {
 
         //Set Variable
         String path = "img/ep-" + Episode + "/vol-" + Volume + "/ch-" + Chapter + "/";
@@ -69,14 +71,21 @@ public class ChapterReader extends AppCompatActivity {
         //Change the appbar Text
         setContentView(R.layout.umineko_episode01_chapter01);
         TextView textView = findViewById(R.id.Titre);
-        textView.setText("Chapter " + Chapter);
-
+        textView.setText(String.format("%s%s", getString(R.string.Chapter), Chapter));
+        if(!first)
+        {
+            viewPager.removeAllViews();
+        }
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
         //prepare view pager
         prepareViewPager(viewPager, jsonObj, path);
         //setup with view pager
         tabLayout.setupWithViewPager(viewPager);
+        if(!first)
+        {
+            viewPager.removeAllViews();
+        }
         tabLayout.selectTab(tabLayout.getTabAt(start));
         listener(jsonObj);
         //Return Button
@@ -86,7 +95,6 @@ public class ChapterReader extends AppCompatActivity {
             finish();
         });
     }
-
     private void listener(EpisodeJson jsonObj) {
         //Play music depending on the page
         //Check the page we're at
@@ -94,13 +102,11 @@ public class ChapterReader extends AppCompatActivity {
         Collections.reverse(myPages);
         //Set the Sound at the start
         setStart(myPages);
-
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             PageJson current = myPages.get(start);
             String NextChapterTobeDisplayed = "";
-
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
+            public void onTabSelected(@NonNull TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 int numTab = tab.getPosition();
                 if (myPages.get(numTab).getPagePath().equals("cover")) {
@@ -113,8 +119,7 @@ public class ChapterReader extends AppCompatActivity {
                     }
                     Volume = jsonObj.getChapterVolume(NextChapterTobeDisplayed);
                     Chapter = NextChapterTobeDisplayed;
-                    //tabLayout.clearOnTabSelectedListeners();
-                    loadingViewpager();
+                    loadingViewpager(false);
                 } else {
                     //If the music is not the same as the one before
                     compareAll(current, myPages.get(numTab));
@@ -126,7 +131,7 @@ public class ChapterReader extends AppCompatActivity {
 
     private void setStart(ArrayList<PageJson> myPages) {
         setMusic2(myPages.get(start).getBgmPath(), 2);
-        HashMap<String, ArrayList<Integer>> MapSe = new HashMap<String, ArrayList<Integer>>();
+        HashMap<String, ArrayList<Integer>> MapSe = new HashMap<>();
         for (int i = 0; i < myPages.get(start).getNumberSE(); i++) {
             ArrayList<Integer> SeState = new ArrayList<>();
             String path = "audio/se/umilse_" + myPages.get(start).getSePath().get(i) + ".ogg";
@@ -154,17 +159,10 @@ public class ChapterReader extends AppCompatActivity {
             for (int j = 0; j < Old.size(); j++) {
                 //Get the point were the two list are the same
                 if (New.get(i).equals(Old.get(j))) {
-                    if (j < New.size()) {
-                        SeState.add(0, j);
-                        SeState.add(1,0);
-                        MapSe.put( "audio/se/umilse_" +New.get(i)+ ".ogg",SeState);
-                        where.add(j);
-                    } else {
-                        SeState.add(0, j);
-                        SeState.add(1,0);
-                        MapSe.put("audio/se/umilse_" +New.get(i)+ ".ogg",SeState);
-                        where.add(j);
-                    }
+                    SeState.add(0, j);
+                    SeState.add(1,0);
+                    MapSe.put( "audio/se/umilse_" +New.get(i)+ ".ogg",SeState);
+                    where.add(j);
                 }
                 else
                 {
@@ -232,7 +230,7 @@ public class ChapterReader extends AppCompatActivity {
     }
 
     private void compareSE(PageJson currentPage, PageJson newPage) {
-        HashMap<String, ArrayList<Integer>> MapSe = new HashMap<String, ArrayList<Integer>>();
+        HashMap<String, ArrayList<Integer>> MapSe = new HashMap<>();
         ArrayList<Integer> SeState = new ArrayList<>();
         //If new is null we just reset the new one
         if (newPage.getSePath() == null) {
@@ -313,10 +311,10 @@ public class ChapterReader extends AppCompatActivity {
 
     private void prepareViewPager(ViewPager viewPager, EpisodeJson jsonObj, String path) {
         //Initialize main adapter
-        ChapterReader.MainAdapter adapter = new ChapterReader.MainAdapter(getSupportFragmentManager());
+         adapter = new ChapterReader.MainAdapter(getSupportFragmentManager());
         //Initialize main Fragment
         ChapterFragment fragment = new ChapterFragment();
-        String goodPath = "img/cover.jpg";
+        String goodPath;
 
         //Use for loop
         for (int i = jsonObj.getChapter(Chapter).size() - 1; i >= 0; i--) {
@@ -364,7 +362,7 @@ public class ChapterReader extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private class MainAdapter extends FragmentPagerAdapter {
+    private class MainAdapter extends FragmentStatePagerAdapter {
         //Initialize Array List
         ArrayList<String> arrayList = new ArrayList<>();
         List<Fragment> fragmentList = new ArrayList<>();

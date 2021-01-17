@@ -52,6 +52,7 @@ public class ChapterAdapter extends BaseAdapter{
         return view;
     }
 
+
     @Override
     public int getCount() {
         return chapterList.size();

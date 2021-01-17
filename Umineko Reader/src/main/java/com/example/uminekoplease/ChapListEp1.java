@@ -2,7 +2,6 @@ package com.example.uminekoplease;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,24 +14,22 @@ import java.util.List;
 
 public class ChapListEp1 extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private ImageView imageView;
-    private TextView textToolBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chap_list_ep1);
 
         //Set up ToolBar
-        this.toolbar=findViewById(R.id.generalToolBar);
+        Toolbar toolbar = findViewById(R.id.generalToolBar);
         setSupportActionBar(toolbar);
-        this.textToolBar=(TextView)findViewById(R.id.Titre);
+        TextView textToolBar = (TextView) findViewById(R.id.Titre);
         textToolBar.setText(R.string.ToolBarChapList);
         //liste de chapitre
         List<Chapter> chapterList = new ArrayList<>();
 
         //Obtenir la liste
 
+        ImageView imageView;
         if(getIntent().getStringExtra("String").equals("Episode 1"))
         {
             chapterList.add(new Chapter("Chapter 01","02/12/2020",new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep","1")
@@ -85,10 +82,10 @@ public class ChapListEp1 extends AppCompatActivity {
         else if(getIntent().getStringExtra("String").equals("Episode 2"))
         {
             //Add our chapter to the LIst
-            this.imageView=(ImageView)findViewById(R.id.cover);
+            imageView =(ImageView)findViewById(R.id.cover);
             imageView.setImageResource(R.drawable.cover1);
-            this.textToolBar=(TextView)findViewById(R.id.underText);
-            textToolBar.setText("Turn of The Golden Witch");
+            textToolBar =(TextView)findViewById(R.id.underText);
+            textToolBar.setText(R.string.TurnOfTheGoldenWitch);
             chapterList.add(new Chapter("Chapter 01","06/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
                     .putExtra("Volume","Volume 02").putExtra("ChapterName","Chapter 01").putExtra("start",true)));
             chapterList.add(new Chapter("Chapter 02","06/12/2020",new Intent(getApplicationContext(), ChapterReader.class)
@@ -151,13 +148,8 @@ public class ChapListEp1 extends AppCompatActivity {
         ListView chapterListView = findViewById(R.id.ep1_listview);
         chapterListView.setAdapter(new ChapterAdapter(this,chapterList));
         //Bouton retour de la toolbar
-        this.imageView=(ImageView)findViewById(R.id.retour);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        imageView =(ImageView)findViewById(R.id.retour);
+        imageView.setOnClickListener(v -> finish());
     }
 
 }

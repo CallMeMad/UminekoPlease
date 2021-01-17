@@ -5,18 +5,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity{
-    //Variable Declaration
-    private Button button;
-    private Button button2;
-    private Button HDbutton;
-    private ImageView imageView;
     private boolean toggle;
     private Intent music;
 
@@ -34,29 +28,27 @@ public class MainActivity extends AppCompatActivity{
         //Toggle Permet de gérer en 1 Bouton l'arrêt et la repris
         toggle=true;
 
-        this.imageView=(ImageView)findViewById(R.id.music);
+        ImageView imageView = (ImageView) findViewById(R.id.music);
 
         //Button to play/stop music
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!toggle)
-                {
-                    toggle=true;
-                    startService(music);
-                }
-                else
-                {
-                    stopService(music);
-                    toggle=false;
-                }
-
+        imageView.setOnClickListener(v -> {
+            if(!toggle)
+            {
+                toggle=true;
+                startService(music);
             }
+            else
+            {
+                stopService(music);
+                toggle=false;
+            }
+
         });
 
         //Button to go to my chapter list
-        this.button= findViewById(R.id.button);
-        button.setText("Episode 1");
+        //Variable Declaration
+        Button button = findViewById(R.id.button);
+        button.setText(R.string.Episode1);
         button.setOnClickListener(view -> {
            Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
            stopService(music);
@@ -66,23 +58,13 @@ public class MainActivity extends AppCompatActivity{
         });
 
         //Button to go to my chapter list
-        this.button2= findViewById(R.id.button2);
-        button2.setText("Episode 2");
+        Button button2 = findViewById(R.id.button2);
+        button2.setText(R.string.Episode2);
         button2.setOnClickListener(view -> {
             Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
             stopService(music);
             toggle=false;
             ChapListEp1.putExtra("String","Episode 2");
-            startActivity(ChapListEp1);
-        });
-        //Button to go to my chapter list
-        this.HDbutton= findViewById(R.id.buttonHD);
-        HDbutton.setText("Episode 1 HD");
-        HDbutton.setOnClickListener(view -> {
-            Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
-            stopService(music);
-            toggle=false;
-            ChapListEp1.putExtra("String","Episode 1 HD");
             startActivity(ChapListEp1);
         });
     }

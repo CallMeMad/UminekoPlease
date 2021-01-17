@@ -24,4 +24,6 @@
     <string name="initChapter2">initChapter2</string>
     <string name="go_to_my_episode">Go to my episode</string>
     <string name="Episode2">Episode 2</string>
+    <string name="Chapter">Chapter </string>
+    <string name="TurnOfTheGoldenWitch">Turn of The Golden Witch</string>
 </resources>
