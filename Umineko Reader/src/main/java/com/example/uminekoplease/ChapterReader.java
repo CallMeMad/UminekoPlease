@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class ChapterReader extends AppCompatActivity {
 
@@ -37,7 +38,7 @@ public class ChapterReader extends AppCompatActivity {
     private String Episode;
     private Intent music;
     private boolean startingPoint;
-    private HashMap<Integer, Integer> MediaPlayerState;
+    private HashMap<Integer, String> MediaPlayerState;
     private int start;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -135,7 +136,7 @@ public class ChapterReader extends AppCompatActivity {
         for (int i = 0; i < myPages.get(start).getNumberSE(); i++) {
             ArrayList<Integer> SeState = new ArrayList<>();
             String path = "audio/se/umilse_" + myPages.get(start).getSePath().get(i) + ".ogg";
-            MediaPlayerState.put(i, 2);
+            MediaPlayerState.put(i, path);
             SeState.add(0, i);
             SeState.add(1, 2);
             MapSe.put(path, SeState);
@@ -146,31 +147,37 @@ public class ChapterReader extends AppCompatActivity {
     }
 
     private void compareMemoryLock(ArrayList<String> New, ArrayList<String> Old, HashMap<String, ArrayList<Integer>> MapSe) {
-        if (New.size() > MediaPlayerState.size()) {
-            for (int i = MediaPlayerState.size(); i < New.size(); i++) {
-                MediaPlayerState.put(i, 2);
-            }
-        }
         ArrayList<Integer> where = new ArrayList<>();
         ArrayList<Integer> where2 = new ArrayList<>();
+        //Parse Same and Different into where and where2
         for (int i = 0; i < New.size(); i++) {
             ArrayList<Integer> SeState = new ArrayList<>();
             int watcher = where.size();
             for (int j = 0; j < Old.size(); j++) {
                 //Get the point were the two list are the same
                 if (New.get(i).equals(Old.get(j))) {
-                    MediaPlayerState.put(i, 0);
-                    SeState.add(0, j);
-                    SeState.add(1, 0);
-                    MapSe.put("audio/se/umilse_" + New.get(i) + ".ogg", SeState);
-                    where.add(j);
+                    for(int k=0;k<MediaPlayerState.size();k++)
+                    {
+                        if(MediaPlayerState.get(k)!=null)
+                        {
+                            if(Objects.requireNonNull(MediaPlayerState.get(k)).equals(New.get(i)))
+                            {
+                                SeState.add(0,k);
+                                SeState.add(1, 0);
+                                MapSe.put("audio/se/umilse_" + New.get(i) + ".ogg", SeState);
+                                where.add(k);
+                            }
+                        }
+                    }
                 }
             }
+            //if different
             if (where.size()==watcher) {
                 where2.add(i);
             }
         }
         int y = 0;
+        //Add all the ID that were different
         for (int i = 0; i < New.size(); i++) {
             int x = 0;
             if(where.size()!=0) {
@@ -180,7 +187,7 @@ public class ChapterReader extends AppCompatActivity {
                     }
                     if (x == where.size() && where2.size()!=0) {
                         ArrayList<Integer> SeState = new ArrayList<>();
-                        MediaPlayerState.put(i, 2);
+                        MediaPlayerState.put(i, New.get(where2.get(y)));
                         SeState.add(0, i);
                         SeState.add(1, 2);
                         MapSe.put("audio/se/umilse_" + New.get(where2.get(y)) + ".ogg", SeState);
@@ -191,20 +198,34 @@ public class ChapterReader extends AppCompatActivity {
             else
             {
                 ArrayList<Integer> SeState = new ArrayList<>();
-                MediaPlayerState.put(i, 2);
+                MediaPlayerState.put(i, New.get(i));
                 SeState.add(0, i);
                 SeState.add(1, 2);
                 MapSe.put("audio/se/umilse_" + New.get(i) + ".ogg", SeState);
             }
         }
-        y = MapSe.size();
-        while (y < Old.size()) {
-            ArrayList<Integer> SeState = new ArrayList<>();
-            MediaPlayerState.put(y, 1);
-            SeState.add(0, y);
-            SeState.add(1, 1);
-            MapSe.put("audio/se/umilse_" + "0" + ".ogg", SeState);
-            y++;
+        //If the Map is still inferior to Old.size it means, the se left must be reseted
+        if(MapSe.size()<Old.size())
+        {
+            for(int i=0;i<Old.size();i++)
+            {
+                int x=0;
+                for(int j=0;j<where.size();j++)
+                 {
+                     if(where.get(x) != i)
+                     {
+                         x++;
+                     }
+                     if(x == where.size())
+                     {
+                         ArrayList<Integer> SeState = new ArrayList<>();
+                         MediaPlayerState.put(i, null);
+                         SeState.add(0, i);
+                         SeState.add(1, 1);
+                         MapSe.put(String.valueOf(i), SeState);
+                     }
+                 }
+            }
         }
         setSe2(MapSe);
     }
@@ -244,11 +265,11 @@ public class ChapterReader extends AppCompatActivity {
             if (currentPage.getSePath() != null) {
                 for (int i = 0; i < MediaPlayerState.size(); i++) {
                     ArrayList<Integer> SeState = new ArrayList<>();
-                    MediaPlayerState.put(i, 1);
+                    MediaPlayerState.put(i, null);
                     SeState.add(0, i);
                     SeState.add(1, 1);
                     SeState.set(1, 1);
-                    MapSe.put("null", SeState);
+                    MapSe.put(String.valueOf(i), SeState);
                 }
                 setSe2(MapSe);
             }
@@ -259,7 +280,7 @@ public class ChapterReader extends AppCompatActivity {
                 for (int i = 0; i < newPage.getNumberSE(); i++) {
                     ArrayList<Integer> SeState = new ArrayList<>();
                     String path = "audio/se/umilse_" + newPage.getSePath().get(i) + ".ogg";
-                    MediaPlayerState.put(i, 2);
+                    MediaPlayerState.put(i, path);
                     SeState.add(0, i);
                     SeState.add(1, 2);
                     MapSe.put(path, SeState);
