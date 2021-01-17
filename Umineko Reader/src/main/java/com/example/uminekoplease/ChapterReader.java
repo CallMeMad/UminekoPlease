@@ -72,8 +72,7 @@ public class ChapterReader extends AppCompatActivity {
         setContentView(R.layout.umineko_episode01_chapter01);
         TextView textView = findViewById(R.id.Titre);
         textView.setText(String.format("%s%s", getString(R.string.Chapter), Chapter));
-        if(!first)
-        {
+        if (!first) {
             viewPager.removeAllViews();
         }
         tabLayout = findViewById(R.id.tab_layout);
@@ -82,8 +81,7 @@ public class ChapterReader extends AppCompatActivity {
         prepareViewPager(viewPager, jsonObj, path);
         //setup with view pager
         tabLayout.setupWithViewPager(viewPager);
-        if(!first)
-        {
+        if (!first) {
             viewPager.removeAllViews();
         }
         tabLayout.selectTab(tabLayout.getTabAt(start));
@@ -95,6 +93,7 @@ public class ChapterReader extends AppCompatActivity {
             finish();
         });
     }
+
     private void listener(EpisodeJson jsonObj) {
         //Play music depending on the page
         //Check the page we're at
@@ -105,6 +104,7 @@ public class ChapterReader extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             PageJson current = myPages.get(start);
             String NextChapterTobeDisplayed = "";
+
             @Override
             public void onTabSelected(@NonNull TabLayout.Tab tab) {
                 super.onTabSelected(tab);
@@ -146,57 +146,64 @@ public class ChapterReader extends AppCompatActivity {
     }
 
     private void compareMemoryLock(ArrayList<String> New, ArrayList<String> Old, HashMap<String, ArrayList<Integer>> MapSe) {
-        if(New.size()>MediaPlayerState.size())
-        {
+        if (New.size() > MediaPlayerState.size()) {
             for (int i = MediaPlayerState.size(); i < New.size(); i++) {
-                MediaPlayerState.put(i,2);
+                MediaPlayerState.put(i, 2);
             }
         }
-        ArrayList<Integer> where= new ArrayList<>();
-        ArrayList<Integer> where2= new ArrayList<>();
+        ArrayList<Integer> where = new ArrayList<>();
+        ArrayList<Integer> where2 = new ArrayList<>();
         for (int i = 0; i < New.size(); i++) {
             ArrayList<Integer> SeState = new ArrayList<>();
+            int watcher = where.size();
             for (int j = 0; j < Old.size(); j++) {
                 //Get the point were the two list are the same
                 if (New.get(i).equals(Old.get(j))) {
+                    MediaPlayerState.put(i, 0);
                     SeState.add(0, j);
-                    SeState.add(1,0);
-                    MapSe.put( "audio/se/umilse_" +New.get(i)+ ".ogg",SeState);
+                    SeState.add(1, 0);
+                    MapSe.put("audio/se/umilse_" + New.get(i) + ".ogg", SeState);
                     where.add(j);
                 }
-                else
-                {
-                    where2.add(i);
-                }
+            }
+            if (where.size()==watcher) {
+                where2.add(i);
             }
         }
-        int y=0;
-        for(int i=0;i<New.size();i++)
-        {
-            int x=0;
-            for(int j=0;j<where.size();j++)
+        int y = 0;
+        for (int i = 0; i < New.size(); i++) {
+            int x = 0;
+            if(where.size()!=0) {
+                for (int j = 0; j < where.size(); j++) {
+                    if (where.get(x) != i) {
+                        x++;
+                    }
+                    if (x == where.size() && where2.size()!=0) {
+                        ArrayList<Integer> SeState = new ArrayList<>();
+                        MediaPlayerState.put(i, 2);
+                        SeState.add(0, i);
+                        SeState.add(1, 2);
+                        MapSe.put("audio/se/umilse_" + New.get(where2.get(y)) + ".ogg", SeState);
+                        y++;
+                    }
+                }
+            }
+            else
             {
-                if(where.get(x)!=i)
-                {
-                    x++;
-                }
-                if(x==where.size())
-                {
-                    ArrayList<Integer> SeState = new ArrayList<>();
-                    SeState.add(0, i);
-                    SeState.add(1,2);
-                    MapSe.put("audio/se/umilse_" +New.get(where2.get(y))+ ".ogg",SeState);
-                    y++;
-                }
+                ArrayList<Integer> SeState = new ArrayList<>();
+                MediaPlayerState.put(i, 2);
+                SeState.add(0, i);
+                SeState.add(1, 2);
+                MapSe.put("audio/se/umilse_" + New.get(i) + ".ogg", SeState);
             }
         }
-        y=MapSe.size();
-        while (y<Old.size())
-        {
+        y = MapSe.size();
+        while (y < Old.size()) {
             ArrayList<Integer> SeState = new ArrayList<>();
+            MediaPlayerState.put(y, 1);
             SeState.add(0, y);
-            SeState.add(1,1);
-            MapSe.put("audio/se/umilse_" +"0"+ ".ogg",SeState);
+            SeState.add(1, 1);
+            MapSe.put("audio/se/umilse_" + "0" + ".ogg", SeState);
             y++;
         }
         setSe2(MapSe);
@@ -233,9 +240,9 @@ public class ChapterReader extends AppCompatActivity {
         HashMap<String, ArrayList<Integer>> MapSe = new HashMap<>();
 
         //If new is null we just reset the new one
-        if (newPage.getSePath() == null) {
+        if (newPage.getNumberSE() == 0) {
             if (currentPage.getSePath() != null) {
-                for (int i = 0; i < currentPage.getSePath().size(); i++) {
+                for (int i = 0; i < MediaPlayerState.size(); i++) {
                     ArrayList<Integer> SeState = new ArrayList<>();
                     MediaPlayerState.put(i, 1);
                     SeState.add(0, i);
@@ -313,7 +320,7 @@ public class ChapterReader extends AppCompatActivity {
 
     private void prepareViewPager(ViewPager viewPager, EpisodeJson jsonObj, String path) {
         //Initialize main adapter
-         adapter = new ChapterReader.MainAdapter(getSupportFragmentManager());
+        adapter = new ChapterReader.MainAdapter(getSupportFragmentManager());
         //Initialize main Fragment
         ChapterFragment fragment = new ChapterFragment();
         String goodPath;

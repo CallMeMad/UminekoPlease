@@ -165,6 +165,7 @@ public class SoundService extends Service {
                 Log.i(TAG, "afd null");
             }
             assert afd != null;
+            Log.i("SE SET",ID);
             se[index].setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
             se[index].prepareAsync(); // prepare async to not block main thread
