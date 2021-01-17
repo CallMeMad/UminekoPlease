@@ -231,11 +231,12 @@ public class ChapterReader extends AppCompatActivity {
 
     private void compareSE(PageJson currentPage, PageJson newPage) {
         HashMap<String, ArrayList<Integer>> MapSe = new HashMap<>();
-        ArrayList<Integer> SeState = new ArrayList<>();
+
         //If new is null we just reset the new one
         if (newPage.getSePath() == null) {
             if (currentPage.getSePath() != null) {
                 for (int i = 0; i < currentPage.getSePath().size(); i++) {
+                    ArrayList<Integer> SeState = new ArrayList<>();
                     MediaPlayerState.put(i, 1);
                     SeState.add(0, i);
                     SeState.add(1, 1);
@@ -245,14 +246,15 @@ public class ChapterReader extends AppCompatActivity {
                 setSe2(MapSe);
             }
         } else {
-            if (currentPage.getSePath() != null) {
+            if (currentPage.getNumberSE() != 0) {
                 compareMemoryLock(newPage.getSePath(), currentPage.getSePath(), MapSe);
             } else {
                 for (int i = 0; i < newPage.getNumberSE(); i++) {
+                    ArrayList<Integer> SeState = new ArrayList<>();
                     String path = "audio/se/umilse_" + newPage.getSePath().get(i) + ".ogg";
                     MediaPlayerState.put(i, 2);
-                    SeState.set(0, i);
-                    SeState.set(1, 2);
+                    SeState.add(0, i);
+                    SeState.add(1, 2);
                     MapSe.put(path, SeState);
                 }
                 setSe2(MapSe);
