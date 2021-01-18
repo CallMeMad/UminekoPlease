@@ -12,7 +12,7 @@
 
     <include
         android:id="@+id/mytoolbar"
-        layout="@layout/appbar">
+        layout="@layout/appbar2">
     </include>
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"

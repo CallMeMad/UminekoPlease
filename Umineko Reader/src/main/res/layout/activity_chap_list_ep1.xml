@@ -10,61 +10,91 @@
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
     android:orientation="vertical"
+    android:background="#BFBFBF"
     tools:context=".ChapListEp1">
 
+    <include
+        android:id="@+id/mytoolbar"
+        app:layout_constraintTop_toTopOf="@id/guideline3"
+        app:layout_constraintTop_toBottomOf="@id/guideline5"
+        layout="@layout/appbar">
+    </include>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.40" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.00" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.33" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.07" />
+
+    <ImageView
+        android:id="@+id/cover"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/Episode1"
+        android:src="@drawable/cover1"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mytoolbar">
+    </ImageView>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/umineko_when_they_cry"
+        android:textSize="30sp"
+        app:layout_constraintTop_toTopOf="@id/cover"
+        app:layout_constraintStart_toEndOf="@+id/cover"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/underText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="@string/legend_of_the_golden_witch"
+        app:layout_constraintTop_toBottomOf="@id/textView"
+        app:layout_constraintStart_toEndOf="@+id/cover"
+        tools:ignore="MissingConstraints" />
+
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#BFBFBF">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cover"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/cover"
-            android:layout_below="@id/mytoolbar"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:textSize="30sp"
-            android:text="@string/umineko_when_they_cry"
-            android:layout_toRightOf="@+id/cover" />
-        <TextView
-            android:id="@+id/underText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/cover"
-            android:layout_below="@id/textView"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:text="@string/legend_of_the_golden_witch"
-            android:layout_toRightOf="@+id/cover" />
-
-        <include
-            android:id="@+id/mytoolbar"
-            layout="@layout/appbar">
-        </include>
-
-        <ImageView
-            android:id="@+id/cover"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/mytoolbar"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/Episode1"
-            android:maxWidth="190dp"
-            android:maxHeight="190dp"
-            android:src="@drawable/cover1">
-        </ImageView>
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/cover">
+            android:layout_height="wrap_content">
+
             <ListView
                 android:id="@+id/ep1_listview"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/cover" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
-
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

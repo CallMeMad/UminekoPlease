@@ -50,6 +50,17 @@ public class EpisodeJson {
     public ArrayList<PageJson> getChapter(String chapter) {
         return this.chapters.get(chapter);
     }
+    public Integer getNumberChapter()
+    {
+        if(this.chapters!=null)
+        {
+            return chapters.size();
+        }
+        else
+        {
+            return 0;
+        }
+    }
     public String getChapterVolume(String Chapter)
     {
         String Volume="";

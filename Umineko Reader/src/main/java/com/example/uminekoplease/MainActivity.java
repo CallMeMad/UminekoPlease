@@ -35,11 +35,13 @@ public class MainActivity extends AppCompatActivity{
             if(!toggle)
             {
                 toggle=true;
+                imageView.setImageResource(R.drawable.musicplaying1);
                 startService(music);
             }
             else
             {
                 stopService(music);
+                imageView.setImageResource(R.drawable.musicmuted1);
                 toggle=false;
             }
 
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity{
            Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
            stopService(music);
            toggle=false;
-           ChapListEp1.putExtra("String","Episode 1");
+           ChapListEp1.putExtra("String","1");
            startActivity(ChapListEp1);
         });
 
@@ -64,7 +66,17 @@ public class MainActivity extends AppCompatActivity{
             Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
             stopService(music);
             toggle=false;
-            ChapListEp1.putExtra("String","Episode 2");
+            ChapListEp1.putExtra("String","2");
+            startActivity(ChapListEp1);
+        });
+        //Button to go to my chapter list
+        Button button3 = findViewById(R.id.button3);
+        button3.setText(R.string.Episode3);
+        button3.setOnClickListener(view -> {
+            Intent ChapListEp1 = new Intent(getApplicationContext(), ChapListEp1.class);
+            stopService(music);
+            toggle=false;
+            ChapListEp1.putExtra("String","3");
             startActivity(ChapListEp1);
         });
     }

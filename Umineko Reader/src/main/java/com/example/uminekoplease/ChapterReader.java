@@ -351,6 +351,10 @@ public class ChapterReader extends AppCompatActivity {
             //Initialize bundle
             Bundle bundle = new Bundle();
             goodPath = path + jsonObj.getChapter(Chapter).get(i).getPagePath() + ".jpg";
+            if(jsonObj.getChapter(Chapter).get(i).getPagePath().equals("cover"))
+            {
+                goodPath="img/cover.jpg";
+            }
             //Put string
             bundle.putString("title", jsonObj.getChapter(Chapter).get(i).getPagePath());
             //put String Path
