@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class EpisodeJson {
     String title;
@@ -24,6 +25,15 @@ public class EpisodeJson {
     }
     public String getArt() {
         return art;
+    }
+
+    public PageJson getFirstPageNextChapter(String Chapter)
+    {
+        return Objects.requireNonNull(chapters.get(getNextChapter(Chapter))).get(0);
+    }
+    public PageJson getLastPagePrevChapter(String Chapter)
+    {
+        return Objects.requireNonNull(chapters.get(getPrevChapter(Chapter))).get(Objects.requireNonNull(chapters.get(getPrevChapter(Chapter))).size()-1);
     }
     public String getPrevChapter(String chapter)
     {

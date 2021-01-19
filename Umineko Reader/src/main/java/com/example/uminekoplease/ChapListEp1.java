@@ -50,7 +50,7 @@ public class ChapListEp1 extends AppCompatActivity {
         textToolBar.setText(jsonObj.getTitle());
         for (int i = 0; i < jsonObj.getNumberChapter(); i++) {
             chapterList.add(new Chapter("Chapter " + (i + 1), jsonObj.getArt(), new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep", "1")
-                    .putExtra("Volume", jsonObj.getChapterVolume(String.valueOf(i + 1))).putExtra("ChapterName", String.valueOf(i + 1)).putExtra("start", true)));
+                    .putExtra("ChapterName", String.valueOf(i + 1)).putExtra("start", true)));
         }
         //get the List inside a ListView
         ListView chapterListView = findViewById(R.id.ep1_listview);

@@ -34,10 +34,10 @@ public class ChapterReader extends AppCompatActivity {
     private ViewPager viewPager;
     private ChapterReader.MainAdapter adapter;
     private String Chapter;
-    private String Volume;
     private String Episode;
     private Intent music;
     private boolean startingPoint;
+    private PageJson current;
     private HashMap<Integer, String> MediaPlayerState;
     private int start;
 
@@ -46,27 +46,29 @@ public class ChapterReader extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Initialize my Chapter
-        Volume = getIntent().getStringExtra("Volume");
         Chapter = getIntent().getStringExtra("ChapterName");
         Episode = getIntent().getStringExtra("ep");
         startingPoint = getIntent().getBooleanExtra("start", true);
         MediaPlayerState = new HashMap<>();
         adapter = new ChapterReader.MainAdapter(getSupportFragmentManager());
         music = new Intent(this, SoundService.class);
+        current=new PageJson(null,null,null,false);
         loadingViewpager(true);
     }
 
     private void loadingViewpager(boolean first) {
 
         //Set Variable
-        String path = "img/ep-" + Episode + "/vol-" + Volume + "/ch-" + Chapter + "/";
+        String path = "img/ep-" + Episode +"/ch-" + Chapter + "/";
         JSONResourceReader jsonReader = new JSONResourceReader(getResources(), getResources().getIdentifier("ep" + Episode, "raw", getPackageName()));
         EpisodeJson jsonObj = jsonReader.constructUsingGson(EpisodeJson.class);
         if (jsonObj.getNextChapter(Chapter) != null) {
-            jsonObj.getChapter(Chapter).add(new PageJson("cover", null, null, false));
+            PageJson info = jsonObj.getFirstPageNextChapter(Chapter);
+            jsonObj.getChapter(Chapter).add(new PageJson("cover", info.getBgmPath(), info.getSePath(), false));
         }
         if (jsonObj.getPrevChapter(Chapter) != null) {
-            jsonObj.getChapter(Chapter).add(0, new PageJson("cover", null, null, false));
+            PageJson info = jsonObj.getLastPagePrevChapter(Chapter);
+            jsonObj.getChapter(Chapter).add(0, new PageJson("cover",info.getBgmPath(),info.getSePath(),false));
         }
 
         //Change the appbar Text
@@ -101,13 +103,12 @@ public class ChapterReader extends AppCompatActivity {
         ArrayList<PageJson> myPages = jsonObj.getChapter(Chapter);
         Collections.reverse(myPages);
         //Set the Sound at the start
-        setStart(myPages);
+        compareAll(current,myPages.get(start));
+        current = myPages.get(start);
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
-            PageJson current = myPages.get(start);
-            String NextChapterTobeDisplayed = "";
-
             @Override
             public void onTabSelected(@NonNull TabLayout.Tab tab) {
+                String NextChapterTobeDisplayed;
                 super.onTabSelected(tab);
                 int numTab = tab.getPosition();
                 if (myPages.get(numTab).getPagePath().equals("cover")) {
@@ -118,7 +119,6 @@ public class ChapterReader extends AppCompatActivity {
                         NextChapterTobeDisplayed = jsonObj.getPrevChapter(Chapter);
                         startingPoint = false;
                     }
-                    Volume = jsonObj.getChapterVolume(NextChapterTobeDisplayed);
                     Chapter = NextChapterTobeDisplayed;
                     loadingViewpager(false);
                 } else {
@@ -128,22 +128,6 @@ public class ChapterReader extends AppCompatActivity {
                 current = myPages.get(numTab);
             }
         });
-    }
-
-    private void setStart(ArrayList<PageJson> myPages) {
-        setMusic2(myPages.get(start).getBgmPath(), 2);
-        HashMap<String, ArrayList<Integer>> MapSe = new HashMap<>();
-        for (int i = 0; i < myPages.get(start).getNumberSE(); i++) {
-            ArrayList<Integer> SeState = new ArrayList<>();
-            String path = "audio/se/umilse_" + myPages.get(start).getSePath().get(i) + ".ogg";
-            MediaPlayerState.put(i, path);
-            SeState.add(0, i);
-            SeState.add(1, 2);
-            MapSe.put(path, SeState);
-        }
-        setSe2(MapSe);
-        setVoice(myPages.get(start).getVoicePage());
-        startService(music);
     }
 
     private void compareMemoryLock(ArrayList<String> New, ArrayList<String> Old, HashMap<String, ArrayList<Integer>> MapSe) {
@@ -280,7 +264,7 @@ public class ChapterReader extends AppCompatActivity {
                 for (int i = 0; i < newPage.getNumberSE(); i++) {
                     ArrayList<Integer> SeState = new ArrayList<>();
                     String path = "audio/se/umilse_" + newPage.getSePath().get(i) + ".ogg";
-                    MediaPlayerState.put(i, path);
+                    MediaPlayerState.put(i, newPage.getSePath().get(i));
                     SeState.add(0, i);
                     SeState.add(1, 2);
                     MapSe.put(path, SeState);
@@ -351,9 +335,17 @@ public class ChapterReader extends AppCompatActivity {
             //Initialize bundle
             Bundle bundle = new Bundle();
             goodPath = path + jsonObj.getChapter(Chapter).get(i).getPagePath() + ".jpg";
-            if(jsonObj.getChapter(Chapter).get(i).getPagePath().equals("cover"))
+            if(jsonObj.getChapter(Chapter).get(i).getPagePath().equals("cover") && i==0)
             {
-                goodPath="img/cover.jpg";
+                int chapter = Integer.parseInt(Chapter);
+                chapter--;
+                goodPath="img/ep-" + (Episode) +"/ch-" + chapter + "/" + jsonObj.getLastPagePrevChapter(Chapter).getPagePath() + ".jpg";
+            }
+            if(jsonObj.getChapter(Chapter).get(i).getPagePath().equals("cover") && i==jsonObj.getChapter(Chapter).size() - 1)
+            {
+                int chapter = Integer.parseInt(Chapter);
+                chapter++;
+                goodPath="img/ep-" + (Episode) +"/ch-" + chapter + "/" + jsonObj.getFirstPageNextChapter(Chapter).getPagePath() + ".jpg";
             }
             //Put string
             bundle.putString("title", jsonObj.getChapter(Chapter).get(i).getPagePath());
