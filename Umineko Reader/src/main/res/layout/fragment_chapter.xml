@@ -16,7 +16,7 @@
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/v01_ch01_02"
+        android:src="@drawable/cover1"
         android:adjustViewBounds="true" />
     <TextView
         android:layout_width="wrap_content"

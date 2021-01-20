@@ -175,7 +175,7 @@ public class SoundService extends Service {
         }
         //mp3 will be started after completion of preparing...
         se[index].setOnPreparedListener(player -> {
-            se[index].setVolume(1, 1);
+            se[index].setVolume(0.72f,0.72f);
             se[index].setLooping(true);
             se[index].start();
         });
