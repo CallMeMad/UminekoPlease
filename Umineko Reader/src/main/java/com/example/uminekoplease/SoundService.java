@@ -208,7 +208,7 @@ public class SoundService extends Service {
         }
         //mp3 will be started after completion of preparing...
         voice.setOnPreparedListener(player -> {
-            voice.setVolume(1.5f, 1.5f);
+            voice.setVolume(1f, 1f);
             voice.start();
         });
     }
