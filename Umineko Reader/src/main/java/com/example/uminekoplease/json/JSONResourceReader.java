@@ -1,12 +1,17 @@
 package com.example.uminekoplease.json;
 
-import java.io.*;
-
 import android.content.res.Resources;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * An object for reading from a JSON resource file and constructing an object from that resource file using Gson.
@@ -16,7 +21,7 @@ public class JSONResourceReader {
     // === [ Private Data Members ] ============================================
 
     // Our JSON, in string form.
-    private String jsonString;
+    private final String jsonString;
     private static final String LOGTAG = JSONResourceReader.class.getSimpleName();
 
     // === [ Public API ] ======================================================
@@ -32,7 +37,7 @@ public class JSONResourceReader {
         InputStream resourceReader = resources.openRawResource(id);
         Writer writer = new StringWriter();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(resourceReader, "UTF-8"));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(resourceReader, StandardCharsets.UTF_8));
             String line = reader.readLine();
             while (line != null) {
                 writer.write(line);

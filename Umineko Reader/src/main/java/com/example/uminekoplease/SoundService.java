@@ -21,22 +21,34 @@ import java.util.Map;
 
 public class SoundService extends Service {
 
+    /**MediaPlayer permettant de jouer la musique de fond*/
     private MediaPlayer myMediaPlayer;
+    /**MediaPlayer jouant les sons d'ambiances*/
     private MediaPlayer[] se;
+    /**MediaPlayer jouant les voix*/
     private MediaPlayer voice;
+    /**Volume sonore*/
     private float[] volume;
+    /**TAG*/
     private static final String TAG = "tag";
+    /**Variable représentant l'état des bgm*/
     private int bgmState;
+    /**Variable représentant l'état des voix*/
     private int voiceState;
+    /**Path de la bgm*/
     private String IDBgm;
+    /**Path de la voix*/
     private String IDvoice;
+    /**Nombre de sons d'ambiance à jouer simultanément*/
     private int numberSe;
+    /**Position de la Se dans le tableau de player*/
     private HashMap<String, ArrayList<Integer>> SeMap;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onCreate() {
         super.onCreate();
+        // création du MediaPlayer
         myMediaPlayer = new MediaPlayer();
         myMediaPlayer.setAudioAttributes(
                 new AudioAttributes
@@ -49,7 +61,9 @@ public class SoundService extends Service {
                         .Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         .build());
+        // création d'un tableau de multiplayer pour les sons d'ambiances
         se=new MediaPlayer[5];
+        // Set le premier mediaPlayer
         numberSe=0;
         se[0] = new MediaPlayer();
         se[0].setAudioAttributes(
@@ -64,14 +78,17 @@ public class SoundService extends Service {
     @SuppressWarnings("unchecked")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //Set up all ID
+        // récupère le Path à partir des Intents
         IDBgm=intent.getStringExtra("ID");
         IDvoice=intent.getStringExtra("voice");
         SeMap = (HashMap<String, ArrayList<Integer>>) intent.getSerializableExtra("MapSe");
+        // récupère les états des différentes types de musique
         bgmState = intent.getIntExtra("bgmState", 2);
         voiceState = intent.getIntExtra("voiceState", 2);
+        //S'il n'y a des SE
         if(SeMap!=null)
         {
+            //On initialise le nombre de Mediaplayer qu'il faut
             while (numberSe<SeMap.size())
             {
                 se[numberSe] = new MediaPlayer();
@@ -83,6 +100,7 @@ public class SoundService extends Service {
                 numberSe++;
             }
         }
+        //Lance la musique de façon Asynchrone
         new AsyncCaller().execute();
         return START_STICKY;
     }
@@ -117,7 +135,9 @@ public class SoundService extends Service {
     }
 
     private void ResetBgm() {
+        //Si le media est en train de jouer
         if (myMediaPlayer.isPlaying()) {
+            //Fade out
             do {
                 myMediaPlayer.setVolume(volume[0], volume[0]);
                 volume[0] -= 0.002f;
@@ -127,7 +147,18 @@ public class SoundService extends Service {
         myMediaPlayer.reset();
     }
 
-    private void SetBgm() {
+    private void SetBgm()
+    {
+        try
+        {
+            myMediaPlayer.setDataSource(IDBgm);
+            myMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        myMediaPlayer.setOnPreparedListener(player -> new FadeIn().execute());
+    }
+    private void SetBgmFromPackage() {
         try {
             AssetFileDescriptor afd = getAssets().openFd(IDBgm);
             if (afd == null) {
@@ -220,27 +251,34 @@ public class SoundService extends Service {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         protected Void doInBackground(Void... locs) {
+            // state 0 veut dire changement de musique
             if (bgmState != 0) {
                 ResetBgm();
             }
             if(SeMap!=null)
             {
+                // on parcourt la map de Se
                 for (Map.Entry mapentry : SeMap.entrySet()) {
                     ArrayList<Integer> temp = (ArrayList<Integer>) mapentry.getValue();
+                    //Code 0 pour changement de se sur le multiplayer
                     if (temp.get(1)!= 0) {
                         ResetSe_1(temp.get(0));
                     }
+                    //Code 2 pour set le se sur un multiplayer non utilisé
                     if (temp.get(1)== 2) {
                         SetSe_1((String)mapentry.getKey(),temp.get(0));
                     }
                 }
             }
+            // code 0 pour reset la voix
             if (voiceState != 0) {
                 ResetVoice();
             }
+            // code 2 pour set la bgm du moment que l'id n'est pas null
             if (bgmState == 2 && IDBgm != null) {
                 SetBgm();
             }
+            // code 2 pour set la voix du moment que l'id n'est pas null
             if (voiceState == 2 && IDvoice != null) {
                 SetVoice();
             }

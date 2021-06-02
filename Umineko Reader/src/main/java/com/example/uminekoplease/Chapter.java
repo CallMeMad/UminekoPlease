@@ -5,9 +5,9 @@ import android.content.Intent;
 public class Chapter {
 
     //Chapter attributes
-    private String name;
-    private String date;
-    private Intent intent;
+    private final String name;
+    private final String date;
+    private final Intent intent;
 
     //Constructor
     public Chapter(String name,String date, Intent intent)

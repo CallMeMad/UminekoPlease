@@ -13,9 +13,9 @@ import java.util.List;
 public class ChapterAdapter extends BaseAdapter{
 
     //Attributes
-    private Context context;
-    private List<Chapter> chapterList;
-    private LayoutInflater inflater;
+    private final Context context;
+    private final List<Chapter> chapterList;
+    private final LayoutInflater inflater;
 
     //Constructor
     public ChapterAdapter(Context context, List<Chapter> chapterList)

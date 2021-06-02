@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**Activité permettant de */
 public class ChapListEp1 extends AppCompatActivity {
 
     @Override
@@ -34,22 +35,22 @@ public class ChapListEp1 extends AppCompatActivity {
         List<Chapter> chapterList = new ArrayList<>();
         //Set the Cover
         ImageView imageView = (ImageView) findViewById(R.id.cover);
-        ;
         InputStream ims = null;
         try {
-            ims = getAssets().open("img/ep-" + getIntent().getStringExtra("String") + "/cover.jpg");
+            ims = getAssets().open(getIntent().getStringExtra("Dir")+"/ep-" + getIntent().getStringExtra("String") + "/img/covers/vol-1.jpg");
             Drawable d = Drawable.createFromStream(ims, null);
             imageView.setImageDrawable(d);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //Obtenir la liste
+        //Obtenir la liste ++
+        String x = "ep" +getIntent().getStringExtra("String");
         JSONResourceReader jsonReader = new JSONResourceReader(getResources(), getResources().getIdentifier("ep" + getIntent().getStringExtra("String"), "raw", getPackageName()));
         EpisodeJson jsonObj = jsonReader.constructUsingGson(EpisodeJson.class);
         textToolBar = (TextView) findViewById(R.id.underText);
         textToolBar.setText(jsonObj.getTitle());
         for (int i = 0; i < jsonObj.getNumberChapter(); i++) {
-            chapterList.add(new Chapter("Chapter " + (i + 1), jsonObj.getArt(), new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep", "1")
+            chapterList.add(new Chapter("Chapter " + (i + 1), jsonObj.getArt(), new Intent(getApplicationContext(), ChapterReader.class).putExtra("ep", getIntent().getStringExtra("String"))
                     .putExtra("ChapterName", String.valueOf(i + 1)).putExtra("start", true)));
         }
         //get the List inside a ListView
